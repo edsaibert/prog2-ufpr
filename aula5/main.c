@@ -1,6 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/*
+
+    Exercício aula 5:
+    Leitura de arquivos binários
+
+*/
+
 
 typedef struct person {
     char id[11];
