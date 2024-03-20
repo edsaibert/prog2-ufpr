@@ -65,14 +65,29 @@ void printInformation( Population_t* head ){
 
     int populationCount = 0;
     int criminals = 0;
+    int hacking = 0;
     float habilityMean;
 
     while (temp) {
-       person = temp->person;
+        person = temp->person;
 
-       printf(" ----------------------------------------- ");
-       prtinf("") 
+        printf(" ----------------------------------------- \n");
+        printf("Pessoa: %s\n", person->id);
+        printf("Habilidade: %d\n", person->hacking);
+
+        populationCount++;
+        hacking = hacking + (person->hacking);
+        if (person->criminal > 5)
+            criminals++;
+       
+        temp = temp->next;
     }
+    habilityMean = hacking/populationCount;
+
+    printf("\n");
+    printf(" Contagem da população: %d\n", populationCount);
+    printf(" Média da habilidade: %f\n", habilityMean);
+    printf(" Criminais: %d", criminals);
 }
 
 int freePopulation(Population_t* head){
@@ -91,6 +106,7 @@ int main() {
     Population_t* head;
 
     head = readFile("citizens.bin");
+    printInformation(head);
     freePopulation(head);
 
     return 0;
