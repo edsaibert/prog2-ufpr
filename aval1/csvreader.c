@@ -2,9 +2,10 @@
 #include "io.h"
 
 int main(int argc, char** argv){
+    char ctrl;
 
     if ((argc < 2) || (argc > 2)){
-        printf("Path inválido. Execução: ./csvreader.c <path.csv>");
+        perror("Path inválido. Execução: ./csvreader.c <path.csv>");
         return 1;
     }
 
@@ -12,7 +13,15 @@ int main(int argc, char** argv){
     for (int i = 0; i < argc; i++){
        strcpy(path, argv[i]); 
     }
-    readFile(path);
+
+    do {
+
+        printf("1)\t Sumário do Arquivo\n2)\t Mostrar\n3)\t Fim\n");
+        printf("Digite uma opção: ");
+        ctrl = getchar();
+        readFile(path, ctrl);
+
+    } while (ctrl != '3');
 
     return 0;
 }

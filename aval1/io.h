@@ -4,13 +4,20 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 
 #define STRING_BUFFER 50
-#define COLUMN_BUFFER 1024
+#define CSV_BUFFER 1024
+#define DELIMITER ","
 
-int readFile( char path[STRING_BUFFER] );
+char*** countCSV( FILE* csv, int* columnsCount, int* lineCount);
 
-int writeFile( FILE* csv );
+int fileSummary( char*** matrix, int columnsCount, int lineCount);
+
+int showFile( char*** matrix, int columnsCount, int lineCount);
+
+int readFile( char path[STRING_BUFFER], int choice );
+
 
 
 #endif 
