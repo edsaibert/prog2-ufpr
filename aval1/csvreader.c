@@ -19,7 +19,9 @@ int main(int argc, char** argv){
         printf("1)\t Sumário do Arquivo\n2)\t Mostrar\n3)\t Fim\n");
         printf("Digite uma opção: ");
         ctrl = getchar();
-        readFile(path, ctrl);
+        printf("\n");
+
+        readFile(path, ctrl - '0');
 
     } while (ctrl != '3');
 
