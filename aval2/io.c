@@ -31,11 +31,14 @@ csv_t* inicializeCSV( char* path ){
 
 };
 
+
 int addToHeader( csv_t *csv, char *column ){
     // Se o headerNames não tiver nenhum valor, aloca espaço para o primeiro
     if ((!csv->headerNames)){
         csv->headerNames = (char**) malloc(STRING_BUFFER * sizeof(char));
-        if (!csv->headerNames){
+        csv->headerTypes = (char**) malloc(STRING_BUFFER * sizeof(char));
+
+        if (!csv->headerNames || !csv->headerTypes){
             perror("Alocação de memória falhou.");
             return 0;
         }
@@ -44,14 +47,22 @@ int addToHeader( csv_t *csv, char *column ){
 
     // Realoca espaço para o próximo título
     csv->headerNames[csv->columnsCount] = (char*) malloc((strlen(column) + 1) * sizeof(char));
-    if (!csv->headerNames[csv->columnsCount]){
+    csv->headerTypes[csv->columnsCount] = (char*) malloc((strlen(column) + 1) * sizeof(char));
+
+    if (!csv->headerNames[csv->columnsCount] || !csv->headerTypes[csv->columnsCount]){
         perror("Alocação de memória falhou.");
         return 0;
     }
 
+    if (isdigit(column[1]))
+        strcpy(csv->headerTypes[csv->columnsCount], "[N]");
+    else
+        strcpy(csv->headerTypes[csv->columnsCount], "[S]"); 
+
     strcpy(csv->headerNames[csv->columnsCount], column);
     return 1;
 }
+
 
 int readCSV( csv_t *csv ){
     char line[CSV_BUFFER];
