@@ -10,23 +10,39 @@
 #define CSV_BUFFER 1024
 #define DELIMITER ","
 
-/*   Verifica se a matriz foi alocada corretamente  */
-char*** matrixIsEmpty(char ***matriz);
+typedef struct csv{
+
+    FILE *csv_file;         /*  Arquivo no qual estão os dados separados por um delimitador */
+    char ***matrix;         /*  Matriz que irá facilitar o uso dos dados no programa    */
+    int columnsCount;       /*  Número de colunas da matriz */
+    int lineCount;          /*  Número de linhas da matriz  */
+    char *buffer;           /*  Buffer que irá armazenar temporariamente linhas da matriz   */
+    char delimiter[2];      /*  Delimitador dos dados   */
+    char **headerNames;     /*  Títulos da tabela   */
+    char **headerTypes;     /*  Tipos de dados da tabela   */
+
+} csv_t;
+
+/*   inicializeCSV  */
+csv_t* inicializeCSV( char* path );
 
 /*   Faz a leitura dos valores do csv na matriz e conta o número de linhas e colunas   */
-char*** countCSV( FILE* csv, int* columnsCount, int* lineCount);
+int readCSV( csv_t *csv );
 
 /*  Diz quais colunas estão no csv  */
-void fileSummary( char*** matrix, int columnsCount, int lineCount);
+void fileSummary( csv_t *csv );
 
 /*  Constrói o resumo dos 5 primeiros itens e últimos 5 itens   */
-void showFile( char*** matrix, int columnsCount, int lineCount);
+void showFile( csv_t *csv );
 
 /*  Arquivo que abre e fecha o arquivo  */
-int readFile( char path[STRING_BUFFER], int choice );
+int readFile( csv_t *csv, char path[STRING_BUFFER], int choice );
 
 /*  Libera a memória alocada    */
-void freeMatrix( char*** matrix, int lineCount, int columnsCount);
+void freeMatrix( csv_t *csv );
+
+/*  Libera a memória do CSV */
+void freeCSV( csv_t *csv );
 
 
 

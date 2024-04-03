@@ -1,0 +1,200 @@
+1) Sumario do arquivo
+2) Mostrar
+3) Filtros
+4) Descricao dos dados
+5) Ordenacao
+6) Selecao
+7) Dados Faltantes
+8) Salvar dados
+9) Fim
+Digite sua opcao: 1
+Nome [S]
+Sexo [S]
+Idade [N]
+Profissao [S]
+Salario [N]
+EC [S]
+6 variaveis encontradas
+
+Pressione Enter para continuar
+
+1) Sumario do arquivo
+2) Mostrar
+3) Filtros
+4) Descricao dos dados
+5) Ordenacao
+6) Selecao
+7) Dados Faltantes
+8) Salvar dados
+9) Fim
+Digite sua opcao: 2
+        Nome Sexo  Idade               Profissao   Salario        EC
+0      Bruna    M     23            Farmacêutico  14567.51  Solteiro
+1  Francisca    F     36              Engenheiro   5160.38    Casado
+2      Paula    M     60             Veterinário  20559.06     Viúvo
+3    Ricardo    F     41             Veterinário  10064.59  Solteiro
+4    Eduardo    F     58      Cientista de Dados  14604.92     Viúvo
+5     Thiago    M     29  Engenheiro de Petróleo   9284.01     Viúvo
+6     Marcos    F     42               Consultor  12548.15     Viúvo
+
+Pressione ENTER para continuar
+
+1) Sumario do arquivo
+2) Mostrar
+3) Filtros
+4) Descricao dos dados
+5) Ordenacao
+6) Selecao
+7) Dados Faltantes
+8) Salvar dados
+9) Fim
+Digite sua opcao: 3
+Entre com a variavel: Idade
+Escolha um filtro ( == > >= < <= != ): >
+Digite um valor: 20
+
+        Nome Sexo  Idade               Profissao   Salario        EC
+0      Bruna    M     23            Farmacêutico  14567.51  Solteiro
+1  Francisca    F     36              Engenheiro   5160.38    Casado
+2      Paula    M     60             Veterinário  20559.06     Viúvo
+3    Ricardo    F     41             Veterinário  10064.59  Solteiro
+4    Eduardo    F     58      Cientista de Dados  14604.92     Viúvo
+5     Thiago    M     29  Engenheiro de Petróleo   9284.01     Viúvo
+6     Marcos    F     42               Consultor  12548.15     Viúvo
+
+Deseja gravar um arquivo com os dados filtrados? [S|N]: S
+
+Entre com o nome do arquivo: FiltradoTeste1.txt
+Arquivo gravado com sucesso
+
+Deseja descartar os dados originais? [S|N]: N
+
+Pressione ENTER para continuar
+
+1) Sumario do arquivo
+2) Mostrar
+3) Filtros
+4) Descricao dos dados
+5) Ordenacao
+6) Selecao
+7) Dados Faltantes
+8) Salvar dados
+9) Fim
+Digite sua opcao: 4
+Entre com a variavel: Profissao
+Contador: 7
+Moda    : Veterinário 2 vezes
+Valores unicos: ['Cientista de Dados', 'Consultor', 'Engenheiro', 'Engenheiro de Petróleo', 'Farmacêutico', 'Veterinário']
+
+Pressione ENTER para continuar
+
+1) Sumario do arquivo
+2) Mostrar
+3) Filtros
+4) Descricao dos dados
+5) Ordenacao
+6) Selecao
+7) Dados Faltantes
+8) Salvar dados
+9) Fim
+Digite sua opcao: 5
+Entre com a variavel: Idade
+Selecione uma opcao [A]scendente ou [D]escrescente: D
+        Nome Sexo  Idade               Profissao   Salario        EC
+2      Paula    M     60             Veterinário  20559.06     Viúvo
+4    Eduardo    F     58      Cientista de Dados  14604.92     Viúvo
+6     Marcos    F     42               Consultor  12548.15     Viúvo
+3    Ricardo    F     41             Veterinário  10064.59  Solteiro
+1  Francisca    F     36              Engenheiro   5160.38    Casado
+5     Thiago    M     29  Engenheiro de Petróleo   9284.01     Viúvo
+0      Bruna    M     23            Farmacêutico  14567.51  Solteiro
+
+Deseja gravar um arquivo com os dados ordenados? [S|N] S
+
+Entre com o nome do arquivo: OrdenadoTeste1.csv
+Arquivo gravado com sucesso
+
+Pressione Enter para continuar
+
+1) Sumario do arquivo
+2) Mostrar
+3) Filtros
+4) Descricao dos dados
+5) Ordenacao
+6) Selecao
+7) Dados Faltantes
+8) Salvar dados
+9) Fim
+Digite sua opcao: 6
+Entre com a variaveis que deseja selecionar (separadas por espaço): Nome Sexo
+        Nome Sexo
+0      Bruna    M
+1  Francisca    F
+2      Paula    M
+3    Ricardo    F
+4    Eduardo    F
+5     Thiago    M
+6     Marcos    F
+
+Deseja gravar um arquivo com as variáveis selecionadas? [S|N] S
+
+Entre com o nome do arquivo: SelecaoTeste1.csv
+Arquivo gravado com sucesso
+
+Pressione ENTER para continuar
+
+1) Sumario do arquivo
+2) Mostrar
+3) Filtros
+4) Descricao dos dados
+5) Ordenacao
+6) Selecao
+7) Dados Faltantes
+8) Salvar dados
+9) Fim
+Digite sua opcao: 7
+	1) Listar registros com NaN 
+	2) Substituir pela media
+	3) Substituir pelo proximo valor valido
+	4) Remover registros com NaN
+	5) Voltar ao menu principal
+	Digite sua opcao: 1
+Empty DataFrame
+Columns: [Nome, Sexo, Idade, Profissao, Salario, EC]
+Index: []
+
+	1) Listar registros com NaN 
+	2) Substituir pela media
+	3) Substituir pelo proximo valor valido
+	4) Remover registros com NaN
+	5) Voltar ao menu principal
+	Digite sua opcao: 5
+
+Pressione Enter para continuar
+
+1) Sumario do arquivo
+2) Mostrar
+3) Filtros
+4) Descricao dos dados
+5) Ordenacao
+6) Selecao
+7) Dados Faltantes
+8) Salvar dados
+9) Fim
+Digite sua opcao: 8
+
+Entre com o nome do arquivo: SalvarTeste1.csv
+Arquivo gravado com sucesso
+
+Pressione Enter para continuar
+
+1) Sumario do arquivo
+2) Mostrar
+3) Filtros
+4) Descricao dos dados
+5) Ordenacao
+6) Selecao
+7) Dados Faltantes
+8) Salvar dados
+9) Fim
+Digite sua opcao: 9

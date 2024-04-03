@@ -1,0 +1,252 @@
+1) Sumario do arquivo
+2) Mostrar
+3) Filtros
+4) Descricao dos dados
+5) Ordenacao
+6) Selecao
+7) Dados Faltantes
+8) Salvar dados
+9) Fim
+Digite sua opcao: 1
+Nome [S]
+Sexo [S]
+Idade [N]
+Profissao [S]
+Salario [N]
+EC [S]
+6 variaveis encontradas
+
+Pressione Enter para continuar
+
+1) Sumario do arquivo
+2) Mostrar
+3) Filtros
+4) Descricao dos dados
+5) Ordenacao
+6) Selecao
+7) Dados Faltantes
+8) Salvar dados
+9) Fim
+Digite sua opcao: 2
+            Nome Sexo  Idade                Profissao   Salario          EC
+0         Marcia    M   18.0                  Gerente  22227.04      Casado
+1          Luana    F   51.0                Arquiteto  13314.47      Casado
+2       Fernanda    F   64.0        Gerente de Vendas   7957.34  Divorciado
+3        Gustavo    M   19.0                  Gerente       NaN      Casado
+4        Juliana    M   65.0     Analista de Sistemas  13124.25  Divorciado
+...          ...  ...    ...                      ...       ...         ...
+999995     Lucas    M   30.0            Gerente de TI  21135.32       Viúvo
+999996    Carlos    M   32.0                  Gerente  12653.52      Casado
+999997     Luana    M   46.0            Diretor (CTO)  20170.73      Casado
+999998  Anderson    F   28.0  Diretor Executivo (CEO)   4238.22    Solteiro
+999999  Gabriela    F   47.0               Engenheiro  18571.24      Casado
+
+[1000000 rows x 6 columns]
+
+Pressione ENTER para continuar
+
+1) Sumario do arquivo
+2) Mostrar
+3) Filtros
+4) Descricao dos dados
+5) Ordenacao
+6) Selecao
+7) Dados Faltantes
+8) Salvar dados
+9) Fim
+Digite sua opcao: 3
+Entre com a variavel: Sexo
+Escolha um filtro ( == > >= < <= != ): ==
+Digite um valor: M
+
+             Nome Sexo  Idade             Profissao   Salario          EC
+0          Marcia    M   18.0               Gerente  22227.04      Casado
+3         Gustavo    M   19.0               Gerente       NaN      Casado
+4         Juliana    M   65.0  Analista de Sistemas  13124.25  Divorciado
+7             Ana    M   25.0              Dentista  13984.30  Divorciado
+8         Leandro    M   64.0          Farmacêutico   4649.43       Viúvo
+...           ...  ...    ...                   ...       ...         ...
+999992  Guilherme    M   52.0              Dentista  11877.27  Divorciado
+999994      Luana    M   54.0                Piloto   4135.82  Divorciado
+999995      Lucas    M   30.0         Gerente de TI  21135.32       Viúvo
+999996     Carlos    M   32.0               Gerente  12653.52      Casado
+999997      Luana    M   46.0         Diretor (CTO)  20170.73      Casado
+
+[500330 rows x 6 columns]
+
+Deseja gravar um arquivo com os dados filtrados? [S|N]: S
+
+Entre com o nome do arquivo: 3-OrdenadoTeste2.csv
+Arquivo gravado com sucesso
+
+Deseja descartar os dados originais? [S|N]: N
+
+Pressione ENTER para continuar
+
+1) Sumario do arquivo
+2) Mostrar
+3) Filtros
+4) Descricao dos dados
+5) Ordenacao
+6) Selecao
+7) Dados Faltantes
+8) Salvar dados
+9) Fim
+Digite sua opcao: 4
+Entre com a variavel: Profissao
+Contador: 1000000
+Moda    : Gerente 104811 vezes
+Valores unicos: ['Advogado', 'Analista de Sistemas', 'Arquiteto', 'Cientista de Dados', 'Consultor', 'Dentista', 'Diretor (CTO)', 'Diretor Executivo (CEO)', 'Engenheiro', 'Engenheiro de Petróleo', 'Farmacêutico', 'Gerente', 'Gerente de TI', 'Gerente de Vendas', 'Médico', 'Piloto', 'Programador', 'Veterinário']
+
+Pressione ENTER para continuar
+
+1) Sumario do arquivo
+2) Mostrar
+3) Filtros
+4) Descricao dos dados
+5) Ordenacao
+6) Selecao
+7) Dados Faltantes
+8) Salvar dados
+9) Fim
+Digite sua opcao: 5
+Entre com a variavel: Salario
+Selecione uma opcao [A]scendente ou [D]escrescente: A
+            Nome Sexo  Idade                Profissao  Salario        EC
+542683    Carlos    M   29.0                   Piloto  3000.02  Solteiro
+968596       Ana    F   57.0                 Dentista  3000.03    Casado
+274562  Fernando    F   39.0   Engenheiro de Petróleo  3000.04     Viúvo
+656255    Rafael    F   26.0              Programador  3000.08    Casado
+486996      João    F   24.0              Veterinário  3000.08  Solteiro
+...          ...  ...    ...                      ...      ...       ...
+999401   Gustavo    M   26.0  Diretor Executivo (CEO)      NaN     Viúvo
+999525     Carla    F   48.0                Arquiteto      NaN  Solteiro
+999625  Patricia    F   65.0                Arquiteto      NaN  Solteiro
+999753   Larissa    F   25.0                 Advogado      NaN    Casado
+999781      João    F   40.0                 Advogado      NaN    Casado
+
+[1000000 rows x 6 columns]
+
+Deseja gravar um arquivo com os dados ordenados? [S|N] S
+
+Entre com o nome do arquivo: 3-OrdenadoTeste2.csv
+Arquivo gravado com sucesso
+
+Pressione Enter para continuar
+
+1) Sumario do arquivo
+2) Mostrar
+3) Filtros
+4) Descricao dos dados
+5) Ordenacao
+6) Selecao
+7) Dados Faltantes
+8) Salvar dados
+9) Fim
+Digite sua opcao: 6
+Entre com a variaveis que deseja selecionar (separadas por espaço): Nome EC
+            Nome          EC
+0         Marcia      Casado
+1          Luana      Casado
+2       Fernanda  Divorciado
+3        Gustavo      Casado
+4        Juliana  Divorciado
+...          ...         ...
+999995     Lucas       Viúvo
+999996    Carlos      Casado
+999997     Luana      Casado
+999998  Anderson    Solteiro
+999999  Gabriela      Casado
+
+[1000000 rows x 2 columns]
+
+Deseja gravar um arquivo com as variáveis selecionadas? [S|N] S
+
+Entre com o nome do arquivo: 4-SelecaoTeste2.csv
+Arquivo gravado com sucesso
+
+Pressione Enter para continuar
+
+1) Sumario do arquivo
+2) Mostrar
+3) Filtros
+4) Descricao dos dados
+5) Ordenacao
+6) Selecao
+7) Dados Faltantes
+8) Salvar dados
+9) Fim
+Digite sua opcao: 7
+	1) Listar registros com NaN 
+	2) Substituir pela media
+	3) Substituir pelo proximo valor valido
+	4) Remover registros com NaN
+	5) Voltar ao menu principal
+	Digite sua opcao: 1
+            Nome Sexo  Idade               Profissao   Salario        EC
+3        Gustavo    M   19.0                 Gerente       NaN    Casado
+15         Aline    M    NaN                  Médico  20860.30  Solteiro
+41          Joao    M   47.0                Advogado       NaN  Solteiro
+69      Anderson    F   37.0               Arquiteto       NaN    Casado
+104      Antonio    F    NaN  Engenheiro de Petróleo  12143.78  Solteiro
+...          ...  ...    ...                     ...       ...       ...
+999680      Luiz    F    NaN                 Gerente  19250.45     Viúvo
+999753   Larissa    F   25.0                Advogado       NaN    Casado
+999780   Beatriz    F    NaN             Veterinário   6796.41     Viúvo
+999781      João    F   40.0                Advogado       NaN    Casado
+999915   Vanessa    F    NaN                  Piloto  10822.50     Viúvo
+
+[19763 rows x 6 columns]
+
+	1) Listar registros com NaN 
+	2) Substituir pela media
+	3) Substituir pelo proximo valor valido
+	4) Remover registros com NaN
+	5) Voltar ao menu principal
+	Digite sua opcao: 2
+	1) Listar registros com NaN 
+	2) Substituir pela media
+	3) Substituir pelo proximo valor valido
+	4) Remover registros com NaN
+	5) Voltar ao menu principal
+	Digite sua opcao: 1
+Empty DataFrame
+Columns: [Nome, Sexo, Idade, Profissao, Salario, EC]
+Index: []
+
+	1) Listar registros com NaN 
+	2) Substituir pela media
+	3) Substituir pelo proximo valor valido
+	4) Remover registros com NaN
+	5) Voltar ao menu principal
+	Digite sua opcao: 5
+	
+Pressione Enter para continuar
+	
+1) Sumario do arquivo
+2) Mostrar
+3) Filtros
+4) Descricao dos dados
+5) Ordenacao
+6) Selecao
+7) Dados Faltantes
+8) Salvar dados
+9) Fim
+Digite sua opcao: 8
+
+Entre com o nome do arquivo: 5-SalvarTeste2.csv  
+Arquivo gravado com sucesso
+
+Pressione Enter para continuar
+
+1) Sumario do arquivo
+2) Mostrar
+3) Filtros
+4) Descricao dos dados
+5) Ordenacao
+6) Selecao
+7) Dados Faltantes
+8) Salvar dados
+9) Fim
+Digite sua opcao: 9
+
