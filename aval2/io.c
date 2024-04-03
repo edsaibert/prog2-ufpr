@@ -35,10 +35,10 @@ csv_t* inicializeCSV( char* path ){
 int addToHeader( csv_t *csv, char *column ){
     // Se o headerNames não tiver nenhum valor, aloca espaço para o primeiro
     if ((!csv->headerNames)){
+        // Alocação do vetor (primeira chamada)
         csv->headerNames = (char**) malloc(STRING_BUFFER * sizeof(char));
-        csv->headerTypes = (char**) malloc(STRING_BUFFER * sizeof(char));
 
-        if (!csv->headerNames || !csv->headerTypes){
+        if (!csv->headerNames){
             perror("Alocação de memória falhou.");
             return 0;
         }
@@ -47,19 +47,40 @@ int addToHeader( csv_t *csv, char *column ){
 
     // Realoca espaço para o próximo título
     csv->headerNames[csv->columnsCount] = (char*) malloc((strlen(column) + 1) * sizeof(char));
-    csv->headerTypes[csv->columnsCount] = (char*) malloc((strlen(column) + 1) * sizeof(char));
 
-    if (!csv->headerNames[csv->columnsCount] || !csv->headerTypes[csv->columnsCount]){
+    if (!csv->headerNames[csv->columnsCount]){
         perror("Alocação de memória falhou.");
         return 0;
     }
 
-    if (isdigit(column[1]))
-        strcpy(csv->headerTypes[csv->columnsCount], "[N]");
-    else
-        strcpy(csv->headerTypes[csv->columnsCount], "[S]"); 
-
     strcpy(csv->headerNames[csv->columnsCount], column);
+    return 1;
+}
+
+int addToTypes( csv_t* csv ){
+    // Alocação do vetor
+    csv->headerTypes = (char**) malloc(STRING_BUFFER * sizeof(char));
+    if (!csv->headerTypes){
+        perror("Alocação de memória falhou.");
+        return 0;
+    }
+
+    for (int i = 0; i < csv->columnsCount; i++){
+        // Alocação da posição i
+        csv->headerTypes[i] = (char *)malloc(STRING_BUFFER * sizeof(char));
+
+        if (!csv->headerTypes[i]){
+            perror("Alocação de memória falhou.");
+            return 0;
+        }
+            return 1;
+
+        if (isdigit(csv->matrix[1][i][1])){
+            csv->headerTypes[i] = "[N]";
+        } 
+        else 
+            csv->headerTypes[i] = "[S]";
+    }
     return 1;
 }
 
@@ -98,6 +119,15 @@ int readCSV( csv_t *csv ){
         (csv->lineCount)++; // Incrementa o número de linhas
     }
 
+    addToTypes(csv);
     return 1;
 
+}
+
+void fileSummary( csv_t* csv ){
+    for (int i = 0; i < csv->columnsCount; i++){
+        printf("\n%-20s \t", csv->headerNames[i]);
+        printf("%s\n", csv->headerTypes[i]);
+    }
+    printf("\n");
 }

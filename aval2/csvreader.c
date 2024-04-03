@@ -37,6 +37,8 @@ int main(int argc, char** argv){
         ctrl = getchar();
         printf("\n");
 
+        if (ctrl == '1') fileSummary(csv);
+
         // readFile(path, ctrl - '0');
 
     } while (ctrl != '9');

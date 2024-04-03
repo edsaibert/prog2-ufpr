@@ -15,5 +15,5 @@ csvreader.o: csvreader.c io.h
 clean:
 	rm -f ./*.o 
 
-flush:
+purge:
 	rm -f ./*.o csvreader
