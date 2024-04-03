@@ -26,6 +26,9 @@ typedef struct csv{
 /*   inicializeCSV  */
 csv_t* inicializeCSV( char* path );
 
+/*  Adiciona os títulos do arquivo csv na struct csv_t  */
+int addToHeader( csv_t *csv, char *column );
+
 /*   Faz a leitura dos valores do csv na matriz e conta o número de linhas e colunas   */
 int readCSV( csv_t *csv );
 

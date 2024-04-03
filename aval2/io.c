@@ -31,6 +31,27 @@ csv_t* inicializeCSV( char* path ){
 
 };
 
+int addToHeader( csv_t *csv, char *column ){
+    // Se o headerNames não tiver nenhum valor, aloca espaço para o primeiro
+    if ((!csv->headerNames)){
+        csv->headerNames = (char**) malloc(STRING_BUFFER * sizeof(char));
+        if (!csv->headerNames){
+            perror("Alocação de memória falhou.");
+            return 0;
+        }
+        return 1;
+    }
+
+    // Realoca espaço para o próximo título
+    csv->headerNames[csv->columnsCount] = (char*) malloc((strlen(column) + 1) * sizeof(char));
+    if (!csv->headerNames[csv->columnsCount]){
+        perror("Alocação de memória falhou.");
+        return 0;
+    }
+
+    strcpy(csv->headerNames[csv->columnsCount], column);
+    return 1;
+}
 
 int readCSV( csv_t *csv ){
     char line[CSV_BUFFER];
@@ -38,8 +59,7 @@ int readCSV( csv_t *csv ){
     // Cria uma matriz de strings para armazenar o conteúdo do arquivo
     if (!(csv->matrix = (char***) malloc(CSV_BUFFER * sizeof(char)))) return 0; 
 
-    while (fgets(line, sizeof(line), csv->csv_file))
-    {
+    while (fgets(line, sizeof(line), csv->csv_file)){
         char *column, *p = line;
         // Aloca espaço para a linha da matriz
         if (!(csv->matrix[csv->lineCount] = (char **)malloc(STRING_BUFFER * sizeof(char))))
@@ -47,14 +67,17 @@ int readCSV( csv_t *csv ){
 
         csv->columnsCount = 0;
 
-        while ((column = strsep(&p, csv->delimiter)))
-        {
+
+        while ((column = strsep(&p, csv->delimiter))){
             // Aloca espaço para o item da matriz
             if (!(csv->matrix[csv->lineCount][csv->columnsCount] = (char *)malloc((strlen(column) + 1) * sizeof(char))))
                 return 0;
 
             // Copia o conteúdo da coluna para o espaço [i, k] da matriz 
             strcpy(csv->matrix[csv->lineCount][csv->columnsCount], column);
+
+            // Adiciona o título da coluna ao header
+            if (csv->lineCount == 0) addToHeader(csv, column); 
 
             if (!column) // Se a coluna for nula, atribui NaN
                 column = "NaN";
