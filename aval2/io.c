@@ -14,11 +14,11 @@ csv_t* inicializeCSV( char* path ){
         return NULL;
     }
 
-    csv->buffer = (char*) malloc(CSV_BUFFER * sizeof(char));
-    if (!csv->buffer){
-        perror("Alocação de memória falhou.");
-        return NULL;
-    }
+    // csv->buffer = (char*) malloc(CSV_BUFFER * sizeof(char));
+    // if (!csv->buffer){
+    //     perror("Alocação de memória falhou.");
+    //     return NULL;
+    // }
 
     csv->headerNames = NULL;
     csv->headerTypes = NULL;
@@ -32,47 +32,31 @@ csv_t* inicializeCSV( char* path ){
 };
 
 
-int addToHeader( csv_t *csv, char *column ){
-    // Se o headerNames não tiver nenhum valor, aloca espaço para o primeiro
-    if ((!csv->headerNames)){
-        // Alocação do vetor (primeira chamada)
-        csv->headerNames = (char**) malloc(STRING_BUFFER * sizeof(char));
-
-        if (!csv->headerNames){
-            perror("Alocação de memória falhou.");
-            return 0;
-        }
-    }
-
-    // Realoca espaço para o próximo título
-    csv->headerNames[csv->columnsCount] = (char*) malloc((strlen(column) + 1) * sizeof(char));
-
-    if (!csv->headerNames[csv->columnsCount]){
-        perror("Alocação de memória falhou.");
-        return 0;
-    }
-
-    strcpy(csv->headerNames[csv->columnsCount], column);
-    return 1;
-}
-
-int addToTypes( csv_t* csv ){
+int addToHeader( csv_t* csv ){
     // Alocação do vetor
     csv->headerTypes = (char**) malloc(csv->columnsCount * sizeof(char*));
-    if (!csv->headerTypes){
+    csv->headerNames = (char**) malloc(csv->columnsCount * sizeof(char*));
+
+    if (!csv->headerTypes || !csv->headerNames){
         perror("Alocação de memória falhou.");
         return 0;
     }
 
     for (int i = 0; i < csv->columnsCount; i++){
-        // Alocação da posição i (necessita apenas de 3 bytes para [N] ou [S] + /0)
-        csv->headerTypes[i] = (char *)malloc(4 * sizeof(char));
+        // Alocação da posição i 
+        csv->headerTypes[i] = (char *)malloc(4 * sizeof(char)); //(necessita apenas de 3 bytes para [N] ou [S] + /0)
+        csv->headerNames[i] = (char *)malloc(STRING_BUFFER * sizeof(char));
 
-        if (!csv->headerTypes[i]){
+        if (!csv->headerTypes[i] || !csv->headerNames[i]){
             perror("Alocação de memória falhou.");
             return 0;
         }
 
+        // Copia o nome das colunas do header para o vetor headerNames
+        strcpy(csv->headerNames[i], csv->matrix[0][i]);
+        printf("%s ", csv->headerNames[i]);
+
+        // Copia os tipos das colunas do header para o vetor headerNames
         if (isdigit(csv->matrix[1][i][1])){
             strcpy(csv->headerTypes[i], "[N]");
         } 
@@ -99,10 +83,6 @@ int readCSV( csv_t *csv ){
         csv->columnsCount = 0;
 
         while ((column = strsep(&p, csv->delimiter))){
-            // Adiciona o título da coluna ao header
-            if (csv->lineCount == 0){
-                addToHeader(csv, column);
-            } 
 
             // Aloca espaço para o item da matriz
             if (!(csv->matrix[csv->lineCount][csv->columnsCount] = (char *)malloc((strlen(column) + 1) * sizeof(char))))
@@ -119,7 +99,7 @@ int readCSV( csv_t *csv ){
         (csv->lineCount)++; // Incrementa o número de linhas
     }
 
-    addToTypes(csv);
+    addToHeader(csv);
     return 1;
 
 }
@@ -142,4 +122,29 @@ void fileSummary( csv_t* csv ){
     printf("\n%d variaveis encontradas", csv->columnsCount);
     printf("\nPrecione ENTER para continuar\n");
     printf("\n");
+}
+
+void freeMatrix( char*** matrix ){
+    for (int i = 0; i < CSV_BUFFER; i++){
+        for (int j = 0; j < STRING_BUFFER; j++){
+            free(matrix[i][j]);
+        }
+        free(matrix[i]);
+    }
+    free(matrix);
+};
+
+void freeHeader( char** types, char** names, int columnsCount ){
+    for (int i = 0; i < columnsCount; i++){
+        free(types[i]);
+        free(names[i]);
+    }
+    free(types);
+    free(names);
+}
+
+void freeCSV( csv_t* csv ){
+    freeMatrix(csv->matrix);
+    freeHeader(csv->headerTypes, csv->headerNames, csv->columnsCount);
+    fclose(csv->csv_file);
 }

@@ -16,7 +16,7 @@ typedef struct csv{
     char ***matrix;         /*  Matriz que irá facilitar o uso dos dados no programa    */
     int columnsCount;       /*  Número de colunas da matriz */
     int lineCount;          /*  Número de linhas da matriz  */
-    char *buffer;           /*  Buffer que irá armazenar temporariamente linhas da matriz   */
+    // char *buffer;           /*  Buffer que irá armazenar temporariamente linhas da matriz   */
     char delimiter[2];      /*  Delimitador dos dados   */
     char **headerNames;     /*  Títulos da tabela   */
     char **headerTypes;     /*  Tipos de dados da tabela   */
@@ -30,7 +30,7 @@ csv_t* inicializeCSV( char* path );
 void printAsTable( char* column );
 
 /*  Adiciona os títulos do arquivo csv na struct csv_t  */
-int addToHeader( csv_t *csv, char *column );
+int addToHeader( csv_t *csv );
 
 /*  Adiciona os tipos de valores do arquivo csv */
 int addToTypes( csv_t *csv );
@@ -48,11 +48,13 @@ void showFile( csv_t *csv );
 int readFile( csv_t *csv, char path[STRING_BUFFER], int choice );
 
 /*  Libera a memória alocada    */
-void freeMatrix( csv_t *csv );
+void freeMatrix( char*** matrix );
 
 /*  Libera a memória do CSV */
 void freeCSV( csv_t *csv );
 
+/* Libera a memória do vetor de header  */
+void freeHeader( char** types, char** names, int columnsCount );
 
 
 #endif 
