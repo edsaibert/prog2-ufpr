@@ -104,20 +104,48 @@ int readCSV( csv_t *csv ){
 
 }
 
-void printAsTable( char* column ){
-    // Identar a string pela esquerda
-    int spaces = 30 - strlen(column);
 
-    printf("%s", column);
-    for (int i = 0; i < spaces; i++){
-        printf(" ");
+void formatAsTable( csv_t* csv ){
+    int maior = 0;
+    int current;
+
+    for (int j = 0; j < csv->columnsCount; j++) {
+        for (int i = 0; i < csv->lineCount; i++) {
+            current = strlen(csv->matrix[i][j]); 
+            if (current > maior)
+                maior = current;
+        }
+    }
+
+    for (int j = 0; j < csv->columnsCount; j++){
+        for (int i = 0; i < csv->lineCount; i++){
+            current = strlen(csv->matrix[i][j]);
+            if (current == maior) continue;
+             
+            if (!realloc(csv->matrix[i][j], current + (maior-current))){
+                perror("Alocação de memória falhou");
+                return;
+            };
+            for (int k = current; k < current + maior-current; k++)
+                csv->matrix[i][j][k] = ' ';
+        }
+    }
+}
+
+void showFile( csv_t* csv ){
+    formatAsTable(csv);
+
+    for (int i = 0; i < csv->lineCount; i++){
+        for (int j = 0; j < csv->columnsCount; j++)
+            printf("%s\t", csv->matrix[i][j]);
+        printf("\n");
     }
 }
 
 void fileSummary( csv_t* csv ){
     for (int i = 0; i < csv->columnsCount; i++){
         printf("\n%-20s", csv->headerNames[i]);
-        printAsTable(csv->headerTypes[i]);
+        printf("%-20s", csv->headerTypes[i]);
     }
     printf("\n%d variaveis encontradas", csv->columnsCount);
     printf("\nPrecione ENTER para continuar\n");

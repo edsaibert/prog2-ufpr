@@ -36,6 +36,7 @@ int main(int argc, char** argv){
         printf("\n");
 
         if (ctrl == '1') fileSummary(csv);
+        if (ctrl == '2') showFile(csv);
 
         // readFile(path, ctrl - '0');
 

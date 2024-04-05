@@ -27,13 +27,10 @@ typedef struct csv{
 csv_t* inicializeCSV( char* path );
 
 /*  Imprime como uma tabela  */
-void printAsTable( char* column );
+void formatAsTable( csv_t* csv );
 
 /*  Adiciona os títulos do arquivo csv na struct csv_t  */
-int addToHeader( csv_t *csv );
-
-/*  Adiciona os tipos de valores do arquivo csv */
-int addToTypes( csv_t *csv );
+int addToHeader( csv_t *csv);
 
 /*   Faz a leitura dos valores do csv na matriz e conta o número de linhas e colunas   */
 int readCSV( csv_t *csv );
