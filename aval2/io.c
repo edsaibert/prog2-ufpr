@@ -42,7 +42,6 @@ int addToHeader( csv_t *csv, char *column ){
             perror("Alocação de memória falhou.");
             return 0;
         }
-        return 1;
     }
 
     // Realoca espaço para o próximo título
@@ -59,27 +58,27 @@ int addToHeader( csv_t *csv, char *column ){
 
 int addToTypes( csv_t* csv ){
     // Alocação do vetor
-    csv->headerTypes = (char**) malloc(STRING_BUFFER * sizeof(char));
+    csv->headerTypes = (char**) malloc(csv->columnsCount * sizeof(char*));
     if (!csv->headerTypes){
         perror("Alocação de memória falhou.");
         return 0;
     }
 
     for (int i = 0; i < csv->columnsCount; i++){
-        // Alocação da posição i
-        csv->headerTypes[i] = (char *)malloc(STRING_BUFFER * sizeof(char));
+        // Alocação da posição i (necessita apenas de 3 bytes para [N] ou [S] + /0)
+        csv->headerTypes[i] = (char *)malloc(4 * sizeof(char));
 
         if (!csv->headerTypes[i]){
             perror("Alocação de memória falhou.");
             return 0;
         }
-            return 1;
 
         if (isdigit(csv->matrix[1][i][1])){
-            csv->headerTypes[i] = "[N]";
+            strcpy(csv->headerTypes[i], "[N]");
         } 
-        else 
-            csv->headerTypes[i] = "[S]";
+        else {
+            strcpy(csv->headerTypes[i], "[S]");
+        }
     }
     return 1;
 }
@@ -99,8 +98,12 @@ int readCSV( csv_t *csv ){
 
         csv->columnsCount = 0;
 
-
         while ((column = strsep(&p, csv->delimiter))){
+            // Adiciona o título da coluna ao header
+            if (csv->lineCount == 0){
+                addToHeader(csv, column);
+            } 
+
             // Aloca espaço para o item da matriz
             if (!(csv->matrix[csv->lineCount][csv->columnsCount] = (char *)malloc((strlen(column) + 1) * sizeof(char))))
                 return 0;
@@ -108,11 +111,8 @@ int readCSV( csv_t *csv ){
             // Copia o conteúdo da coluna para o espaço [i, k] da matriz 
             strcpy(csv->matrix[csv->lineCount][csv->columnsCount], column);
 
-            // Adiciona o título da coluna ao header
-            if (csv->lineCount == 0) addToHeader(csv, column); 
-
             if (!column) // Se a coluna for nula, atribui NaN
-                column = "NaN";
+                strcpy(column, "NaN");
 
             (csv->columnsCount)++; // Incrementa o número de colunas
         }
@@ -124,10 +124,22 @@ int readCSV( csv_t *csv ){
 
 }
 
+void printAsTable( char* column ){
+    // Identar a string pela esquerda
+    int spaces = 30 - strlen(column);
+
+    printf("%s", column);
+    for (int i = 0; i < spaces; i++){
+        printf(" ");
+    }
+}
+
 void fileSummary( csv_t* csv ){
     for (int i = 0; i < csv->columnsCount; i++){
-        printf("\n%-20s \t", csv->headerNames[i]);
-        printf("%s\n", csv->headerTypes[i]);
+        printf("\n%-20s", csv->headerNames[i]);
+        printAsTable(csv->headerTypes[i]);
     }
+    printf("\n%d variaveis encontradas", csv->columnsCount);
+    printf("\nPrecione ENTER para continuar\n");
     printf("\n");
 }

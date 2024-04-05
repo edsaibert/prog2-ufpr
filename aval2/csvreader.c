@@ -19,8 +19,6 @@ int main(int argc, char** argv){
     if (!(csv = inicializeCSV(path))) return 1;
     if (!(readCSV(csv))) return 1;
 
-    readCSV(csv);
-
     do {
 
         printf( "1)\t Sumário do Arquivo\n" );

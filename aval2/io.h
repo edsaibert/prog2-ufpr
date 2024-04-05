@@ -26,6 +26,9 @@ typedef struct csv{
 /*   inicializeCSV  */
 csv_t* inicializeCSV( char* path );
 
+/*  Imprime como uma tabela  */
+void printAsTable( char* column );
+
 /*  Adiciona os títulos do arquivo csv na struct csv_t  */
 int addToHeader( csv_t *csv, char *column );
 
