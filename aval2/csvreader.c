@@ -35,8 +35,17 @@ int main(int argc, char** argv){
         ctrl = getchar();
         printf("\n");
 
-        if (ctrl == '1') fileSummary(csv);
-        if (ctrl == '2') showFile(csv);
+        switch(ctrl){
+            case '1':
+                fileSummary(csv);
+                break;
+            case '2':
+                showFile(csv);
+                break;
+            default:
+                perror("Opção não válida.");
+                break;
+        };
 
         // readFile(path, ctrl - '0');
 

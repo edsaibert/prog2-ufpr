@@ -56,8 +56,14 @@ int addToHeader( csv_t* csv ){
         strcpy(csv->headerNames[i], csv->matrix[0][i]);
         printf("%s ", csv->headerNames[i]);
 
+        // Gambiarra se o primeiro valor é NaN
+        int j = 1;
+        while (strcmp((csv->matrix[j][i]), "") == 0){
+            j++;
+        }
+
         // Copia os tipos das colunas do header para o vetor headerNames
-        if (isdigit(csv->matrix[1][i][1])){
+        if (isdigit(csv->matrix[j][i][1])){
             strcpy(csv->headerTypes[i], "[N]");
         } 
         else {
@@ -92,7 +98,7 @@ int readCSV( csv_t *csv ){
             strcpy(csv->matrix[csv->lineCount][csv->columnsCount], column);
 
             if (!column) // Se a coluna for nula, atribui NaN
-                strcpy(column, "NaN");
+                column = "NaN";
 
             (csv->columnsCount)++; // Incrementa o número de colunas
         }
@@ -103,7 +109,6 @@ int readCSV( csv_t *csv ){
     return 1;
 
 }
-
 
 void formatAsTable( csv_t* csv ){
     int maior = 0;
