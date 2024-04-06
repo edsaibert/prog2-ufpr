@@ -12,19 +12,22 @@
 
 typedef struct csv{
 
-    FILE *csv_file;         /*  Arquivo no qual estão os dados separados por um delimitador */
-    char ***matrix;         /*  Matriz que irá facilitar o uso dos dados no programa    */
-    int columnsCount;       /*  Número de colunas da matriz */
-    int lineCount;          /*  Número de linhas da matriz  */
-    // char *buffer;           /*  Buffer que irá armazenar temporariamente linhas da matriz   */
-    char delimiter[2];      /*  Delimitador dos dados   */
-    char **headerNames;     /*  Títulos da tabela   */
-    char **headerTypes;     /*  Tipos de dados da tabela   */
+    FILE *csv_file;                  /*  Arquivo no qual estão os dados separados por um delimitador */
+    char ***matrix;                  /*  Matriz que irá facilitar o uso dos dados no programa    */
+    unsigned int fileSize;           /*  Número de bytes do programa */
+    unsigned int columnsCount;       /*  Número de colunas da matriz */
+    unsigned int lineCount;          /*  Número de linhas da matriz  */
+    char delimiter[2];               /*  Delimitador dos dados   */
+    char **headerNames;              /*  Títulos da tabela   */
+    char **headerTypes;              /*  Tipos de dados da tabela   */
 
 } csv_t;
 
 /*   inicializeCSV  */
 csv_t* inicializeCSV( char* path );
+
+/*  Retorna o tamanho do arquivo com pase em FSEEK e FTELL  */
+int fileSize( FILE* csv_file );
 
 /*  Imprime como uma tabela  */
 void formatAsTable( csv_t* csv );
@@ -45,13 +48,13 @@ void showFile( csv_t *csv );
 int readFile( csv_t *csv, char path[STRING_BUFFER], int choice );
 
 /*  Libera a memória alocada    */
-void freeMatrix( char*** matrix );
+void freeMatrix( char*** matrix, int fileSize );
 
 /*  Libera a memória do CSV */
 void freeCSV( csv_t *csv );
 
 /* Libera a memória do vetor de header  */
-void freeHeader( char** types, char** names, int columnsCount );
+void freeHeader( char** types, char** names, unsigned int columnsCount );
 
 
 #endif 
