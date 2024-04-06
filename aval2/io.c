@@ -73,8 +73,8 @@ int addToHeader( csv_t* csv ){
 }
 
 int fileSize( FILE* csv_file ){
-    if (csv_file == NULL) return 0;
 
+    if (csv_file == NULL) return 0;
     /*  Desloca ponteiro para fim do arquivo    */
     fseek(csv_file, 0, SEEK_END);
     /*  Descobre o valor do ponteiro    */
@@ -97,7 +97,7 @@ int readCSV( csv_t *csv ){
     while (fgets(line, sizeof(line), csv->csv_file)){
         char *column, *p = line;
         // Aloca espaço para a linha da matriz
-        if (!(csv->matrix[csv->lineCount] = (char **)malloc(STRING_BUFFER * sizeof(char))))
+        if (!(csv->matrix[csv->lineCount] = (char **)malloc(STRING_BUFFER * sizeof(char**))))
             return 0;
 
         csv->columnsCount = 0;
@@ -164,17 +164,16 @@ void showFile( csv_t* csv ){
 
 void fileSummary( csv_t* csv ){
     for (unsigned int i = 0; i < csv->columnsCount; i++){
-        printf("\n%-20s", csv->headerNames[i]);
-        printf("%-20s", csv->headerTypes[i]);
+        printf("\n%s ", csv->headerNames[i]);
+        printf("%s", csv->headerTypes[i]);
     }
     printf("\n%d variaveis encontradas", csv->columnsCount);
-    printf("\nPrecione ENTER para continuar\n");
     printf("\n");
 }
 
-void freeMatrix( char*** matrix, int fileSize ){
-    for (unsigned int i = 0; i < fileSize; i++){
-        for (int j = 0; j < STRING_BUFFER; j++){
+void freeMatrix( char*** matrix, unsigned int columnsCount, unsigned int lineCount ){
+    for (unsigned int i = 0; i < lineCount; i++){
+        for (unsigned int j = 0; j < columnsCount; j++){
             free(matrix[i][j]);
         }
         free(matrix[i]);
@@ -192,7 +191,8 @@ void freeHeader( char** types, char** names, unsigned int columnsCount ){
 }
 
 void freeCSV( csv_t* csv ){
-    freeMatrix(csv->matrix, csv->fileSize);
+    freeMatrix(csv->matrix, csv->columnsCount, csv->lineCount);
     freeHeader(csv->headerTypes, csv->headerNames, csv->columnsCount);
     fclose(csv->csv_file);
+    free(csv);
 }

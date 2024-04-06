@@ -48,7 +48,7 @@ void showFile( csv_t *csv );
 int readFile( csv_t *csv, char path[STRING_BUFFER], int choice );
 
 /*  Libera a memória alocada    */
-void freeMatrix( char*** matrix, int fileSize );
+void freeMatrix( char*** matrix, unsigned int columnsCount, unsigned int lineCount );
 
 /*  Libera a memória do CSV */
 void freeCSV( csv_t *csv );

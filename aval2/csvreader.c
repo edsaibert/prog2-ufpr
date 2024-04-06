@@ -45,14 +45,20 @@ int main(int argc, char** argv){
             case '2':
                 showFile(csv);
                 break;
+            case '9':
+                break;
             default:
                 perror("Opção não válida.");
                 break;
         };
 
+        printf("\nPrecione ENTER para continuar\n");
+        getchar();
         // readFile(path, ctrl - '0');
 
     } while (ctrl != '9');
+
+    freeCSV(csv);
 
     return 0;
 }
