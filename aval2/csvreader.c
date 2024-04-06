@@ -11,7 +11,7 @@ int main(int argc, char** argv){
         return 1;
     }
 
-    char path[CSV_BUFFER];
+    char path[STRING_BUFFER];
     for (int i = 0; i < argc; i++){
        strcpy(path, argv[i]); 
     }
@@ -21,7 +21,7 @@ int main(int argc, char** argv){
 
     do {
 
-        printf( "1)\t Sumário do Arquivo\n" );
+        printf("\n1)\t Sumário do Arquivo\n" );
         printf("2)\t Mostrar\n");
         printf("3)\t Filtros\n");
         printf("4)\t Descrição dos Dados\n");
@@ -33,6 +33,9 @@ int main(int argc, char** argv){
 
         printf("Digite uma opção: ");
         ctrl = getchar();
+
+        /*  Joga fora o char '\n' */
+        getchar();
         printf("\n");
 
         switch(ctrl){

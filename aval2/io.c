@@ -54,7 +54,6 @@ int addToHeader( csv_t* csv ){
 
         // Copia o nome das colunas do header para o vetor headerNames
         strcpy(csv->headerNames[i], csv->matrix[0][i]);
-        printf("%s ", csv->headerNames[i]);
 
         // Gambiarra se o primeiro valor é NaN
         int j = 1;
@@ -158,9 +157,9 @@ void showFile( csv_t* csv ){
 
     for (unsigned int i = 0; i < csv->lineCount; i++){
         for (unsigned int j = 0; j < csv->columnsCount; j++)
-            printf("%s\t", csv->matrix[i][j]);
-        printf("\n");
+            printf("\t%s", csv->matrix[i][j]);
     }
+    printf("\n");
 }
 
 void fileSummary( csv_t* csv ){
