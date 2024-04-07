@@ -20,6 +20,8 @@ typedef struct csv{
     char delimiter[2];               /*  Delimitador dos dados   */
     char **headerNames;              /*  Títulos da tabela   */
     char **headerTypes;              /*  Tipos de dados da tabela   */
+    int  *index;                     /*  Vetor com a coluna index*/
+    // int  *maxStrlen;                 /*  Contém o máximo strlen de cada coluna */
 
 } csv_t;
 
@@ -30,7 +32,7 @@ csv_t* inicializeCSV( char* path );
 int fileSize( FILE* csv_file );
 
 /*  Imprime como uma tabela  */
-void formatAsTable( csv_t* csv );
+void formatAsTable( char **f, int* maxStrlen, unsigned int columnsCount, char** string );
 
 /*  Adiciona os títulos do arquivo csv na struct csv_t  */
 int addToHeader( csv_t *csv);
@@ -42,7 +44,7 @@ int readCSV( csv_t *csv );
 void fileSummary( csv_t *csv );
 
 /*  Constrói o resumo dos 5 primeiros itens e últimos 5 itens   */
-void showFile( csv_t *csv );
+int showFile( csv_t *csv );
 
 /*  Arquivo que abre e fecha o arquivo  */
 int readFile( csv_t *csv, char path[STRING_BUFFER], int choice );

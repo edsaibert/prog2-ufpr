@@ -72,6 +72,16 @@ int addToHeader( csv_t* csv ){
     return 1;
 }
 
+int addToIndex( csv_t* csv ){
+    if (!(csv->index = (int*) malloc(csv->lineCount * sizeof(int)))) return 0; 
+
+    for (unsigned int i = 0; i < csv->lineCount; i++){
+        csv->index[i] = i;
+    }
+
+    return 1;
+}
+
 int fileSize( FILE* csv_file ){
 
     if (csv_file == NULL) return 0;
@@ -92,74 +102,111 @@ int readCSV( csv_t *csv ){
     csv->fileSize = size;
 
     // Cria uma matriz de strings para armazenar o conteúdo do arquivo
-    if (!(csv->matrix = (char***) malloc(size * sizeof(char)))) return 0; 
+    if (!(csv->matrix = (char***) malloc(size * sizeof(char**)))) return 0; 
 
     while (fgets(line, sizeof(line), csv->csv_file)){
         char *column, *p = line;
         // Aloca espaço para a linha da matriz
-        if (!(csv->matrix[csv->lineCount] = (char **)malloc(STRING_BUFFER * sizeof(char**))))
+        if (!(csv->matrix[csv->lineCount] = (char **)malloc(STRING_BUFFER * sizeof(char*))))
             return 0;
 
         csv->columnsCount = 0;
 
         while ((column = strsep(&p, csv->delimiter))){
 
+            if (!column) // Se a coluna for nula, atribui NaN
+                strcpy(column, "NaN");
+
             // Aloca espaço para o item da matriz
             if (!(csv->matrix[csv->lineCount][csv->columnsCount] = (char *)malloc((strlen(column) + 1) * sizeof(char))))
                 return 0;
 
-            // Copia o conteúdo da coluna para o espaço [i, k] da matriz 
+            // Copia o conteúdo da coluna para o espaço [i, k] da matriz
             strcpy(csv->matrix[csv->lineCount][csv->columnsCount], column);
-
-            if (!column) // Se a coluna for nula, atribui NaN
-                column = "NaN";
 
             (csv->columnsCount)++; // Incrementa o número de colunas
         }
         (csv->lineCount)++; // Incrementa o número de linhas
     }
 
-    addToHeader(csv);
+    if(!addToIndex(csv)) return 0;
+    if (!addToHeader(csv)) return 0;
     return 1;
 
 }
 
-void formatAsTable( csv_t* csv ){
-    int current;
-    int maior;
+void formatAsTable( char** f, int* maxStrlen, unsigned int columnsCount, char** string ){
+    unsigned int i = 0;
+    unsigned int j;
 
-    for (unsigned int j = 0; j < csv->columnsCount; j++) {
-        maior = 0;
-        for (unsigned int i = 0; i < csv->lineCount; i++) {
-            current = strlen(csv->matrix[i][j]); 
-            if (current > maior)
-                maior = current;
-        }
+    while(1){
+        for (j = 0; j < maxStrlen[i] - strlen(string[i]); j++) f[i][j] = ' ';
+        strcpy(f[i] + j, string[i]);
 
-        for (unsigned int k = 0; k < csv->lineCount; k++){
-                current = strlen(csv->matrix[k][j]);
-                if (current == maior)
-                    continue;
-
-                if (!realloc(csv->matrix[k][j], current + (maior - current))){
-                    perror("Alocação de memória falhou");
-                    return;
-                };
-                for (unsigned int l = current; l < current + maior - current; l++)
-                    csv->matrix[k][j][l] = ' ';
+        i++;
+        if ((i == columnsCount) || (!string[i])) break;
     }
-
-    }
+    for(; i < columnsCount; i++) f[i][0] = '\0';
 }
 
-void showFile( csv_t* csv ){
-    formatAsTable(csv);
+int showFile( csv_t* csv ){
+    char* f[csv->columnsCount];
+    int* maxStrlen;
 
-    for (unsigned int i = 0; i < csv->lineCount; i++){
-        for (unsigned int j = 0; j < csv->columnsCount; j++)
-            printf("\t%s", csv->matrix[i][j]);
+    maxStrlen = (int *)malloc(csv->columnsCount * sizeof(int));
+    if (maxStrlen == NULL) {
+        perror("Memory allocation failed");
+        return 0;
     }
-    printf("\n");
+
+    for (unsigned int j = 0; j < csv->columnsCount; j++) {
+        maxStrlen[j] = 0;
+
+        for (unsigned int i = 0; i < csv->lineCount; i++) {
+            int current = strlen(csv->matrix[i][j]);
+            if (current > maxStrlen[j]) {
+                maxStrlen[j] = current;
+            }
+        }
+    }
+
+    for(int i = 0; i < csv->columnsCount; i++) f[i] = (char*) malloc(maxStrlen[i] + 1);
+    char aux[2* sizeof(long int)];
+
+    if (csv->lineCount <= 10){
+        for (int i = 0; i < csv->lineCount; i++){
+            formatAsTable(f, maxStrlen, csv->columnsCount, csv->matrix[i]);
+
+            // sprintf(aux, "%d", i-1);
+            // printf("%-*s", csv->columnsCount, i == 0? " " : aux);
+            printf("%-*d", csv->columnsCount, csv->index[i]);
+
+            for (int j = 0; j < csv->columnsCount; j++)
+                printf("\t%s", f[j]);
+            printf("\n");
+        }
+    } 
+    else {
+        for (int i = 0; i < csv->lineCount; i++){
+            if (i <= 5 || i >= csv->lineCount-5){
+                formatAsTable(f, maxStrlen, csv->columnsCount, csv->matrix[i]);
+
+                // sprintf(aux, "%d", i-1);                 
+                // printf("%-*s", csv->columnsCount, i == 0 ? " " : aux);
+                printf("%-*d", csv->columnsCount, csv->index[i]);
+
+                for (int j = 0; j < csv->columnsCount; j++)
+                    printf("\t%s", f[j]);
+                printf("\n");
+            }
+        }
+
+        free(maxStrlen); 
+        for (int i = 0; i < csv->columnsCount; i++) free(f[i]);
+    }
+
+    printf("[%d rows] x [%d columns]", csv->lineCount-1, csv->columnsCount);
+    return 1;
 }
 
 void fileSummary( csv_t* csv ){
@@ -193,6 +240,7 @@ void freeHeader( char** types, char** names, unsigned int columnsCount ){
 void freeCSV( csv_t* csv ){
     freeMatrix(csv->matrix, csv->columnsCount, csv->lineCount);
     freeHeader(csv->headerTypes, csv->headerNames, csv->columnsCount);
+    free(csv->index);
     fclose(csv->csv_file);
     free(csv);
 }
