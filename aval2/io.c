@@ -243,7 +243,7 @@ void filterEntry( csv_t* csv ){
 
     while (i < csv->columnsCount && strcmp(csv->headerNames[i], column) != 0) i++;
 
-    if (i == csv->columnsCount-1 && strcmp(csv->headerNames[i], column) != 0){
+    if (i == csv->columnsCount){
         perror("Variável não encontrada.");
         return;
     }
