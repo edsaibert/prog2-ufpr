@@ -45,6 +45,9 @@ int main(int argc, char** argv){
             case '2':
                 showFile(csv);
                 break;
+            case '3':
+                filterEntry(csv);
+                break;
             case '9':
                 break;
             default:

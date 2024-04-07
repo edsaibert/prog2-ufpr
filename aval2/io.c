@@ -1,5 +1,25 @@
 #include "io.h"
 
+int eq(char* a, char* b){
+    return strcmp(a, b) == 0;
+}
+
+int egt(char* a, char* b){
+    return strcmp(a, b) >= 0;
+}
+
+int gt(char* a, char* b){
+    return strcmp(a, b) > 0;
+}
+
+int elt(char* a, char* b){
+    return strcmp(a, b) <= 0;
+}
+
+int lt(char* a, char* b){
+    return strcmp(a, b) < 0;
+}
+
 csv_t* inicializeCSV( char* path ){
 
     csv_t* csv = (csv_t*) malloc(sizeof(csv_t));
@@ -208,6 +228,36 @@ int showFile( csv_t* csv ){
     printf("[%d rows] x [%d columns]", csv->lineCount-1, csv->columnsCount);
     return 1;
 }
+
+int filterFile( csv_t* csv, int (*func)(char* a, char* b)){
+    printf("oi");
+}
+
+void filterEntry( csv_t* csv ){
+    char ctrl[3 * sizeof(char)];
+    char column[STRING_BUFFER];
+    unsigned int i = 0;
+
+    printf("\nEntre com a variável: ");
+    fgets(column, sizeof(column), stdin);
+
+    while (i < csv->columnsCount && strcmp(csv->headerNames[i], column) != 0) i++;
+
+    if (i == csv->columnsCount-1 && strcmp(csv->headerNames[i], column) != 0){
+        perror("Variável não encontrada.");
+        return;
+    }
+
+    printf("Escolha um filtro ( == > >= < <= != ): ");
+    fgets(ctrl, sizeof(ctrl), stdin);
+
+    if (eq(ctrl, "==")) filterFile( csv, eq);
+    else if (eq(ctrl, ">=")) filterFile( csv, egt);
+    else if (eq(ctrl, ">")) filterFile( csv, gt);
+    else if (eq(ctrl, "<=")) filterFile( csv, elt);
+    else if (eq(ctrl, "<")) filterFile( csv, lt);
+}
+
 
 void fileSummary( csv_t* csv ){
     for (unsigned int i = 0; i < csv->columnsCount; i++){
