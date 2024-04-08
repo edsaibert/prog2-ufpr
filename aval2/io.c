@@ -239,9 +239,14 @@ void filterEntry( csv_t* csv ){
     unsigned int i = 0;
 
     printf("\nEntre com a variável: ");
-    fgets(column, sizeof(column), stdin);
+    fgets(column, STRING_BUFFER, stdin);
+    getchar();
 
-    while (i < csv->columnsCount && strcmp(csv->headerNames[i], column) != 0) i++;
+    while (i < csv->columnsCount && eq(csv->headerNames[i], column) != 1){
+        printf("%d", eq(csv->headerNames[i], column));
+        printf("%s, %s", csv->headerNames[i], column);
+        i++;
+    }
 
     if (i == csv->columnsCount){
         perror("Variável não encontrada.");

@@ -11,6 +11,8 @@
 #define CSV_BUFFER 1024
 #define DELIMITER ","
 
+typedef char string[STRING_BUFFER];
+
 
 /*  struct do csv   */
 typedef struct csv{
