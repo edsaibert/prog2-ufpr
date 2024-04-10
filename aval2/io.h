@@ -6,8 +6,8 @@
 #include <string.h>
 #include <ctype.h>
 
-/*  variáveis globais   */
-#define STRING_BUFFER[50]
+#include "stringItem.h"
+
 #define CSV_BUFFER 1024
 #define DELIMITER ","
 
@@ -31,8 +31,13 @@ typedef struct csv{
 /* --------------------------------------- */
 /* Funções de inicializacao */
 
+/*  Abre ou cria um arquivo */
+FILE* createFile( char* path );
+
 /*   inicializeCSV  */
 csv_t* inicializeCSV( char* path );
+
+int populateFile( csv_t* csv );
 
 /*  Retorna o tamanho do arquivo com pase em FSEEK e FTELL  */
 int fileSize( FILE* csv_file );
@@ -45,15 +50,7 @@ int addToIndex( csv_t* csv );
 
 /*   Faz a leitura dos valores do csv na matriz e conta o número de linhas e colunas   */
 int readCSV( csv_t *csv );
-/* --------------------------------------- */
 
-/*  Funções de filtro   */
-int eq(char* a, char* b);     // a igual b
-int neq(char* a, char* b);    // a diferente de b
-int egt(char* a, char* b);    // a maior ou igual a b
-int gt(char* a, char* b);     // a maior que b 
-int elt(char* a, char* b);   // a menor ou igual a b
-int lt(char* a, char* b);    // a menor que b
 
 /* --------------------------------------- */
 
@@ -85,6 +82,9 @@ void filterEntry( csv_t* );
 /* --------------------------------------- */
 
 /* Funções de free  */
+
+/*  Libera a memória da matriz que não satisfazeram o filtro */
+void conditionalFree( csv_t* csv, char*** newMatrix, int* index, int newLineCount );
 
 /*  Libera a memória alocada    */
 void freeMatrix( char*** matrix, unsigned int columnsCount, unsigned int lineCount );

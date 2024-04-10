@@ -1,27 +1,12 @@
 #include "io.h"
 
-int eq(char* a, char* b){
-    return strcmp(a, b) == 0;
-}
-
-int neq(char* a, char* b){
-    return strcmp(a, b) != 0;
-}
-
-int egt(char* a, char* b){
-    return strcmp(a, b) >= 0;
-}
-
-int gt(char* a, char* b){
-    return strcmp(a, b) > 0;
-}
-
-int elt(char* a, char* b){
-    return strcmp(a, b) <= 0;
-}
-
-int lt(char* a, char* b){
-    return strcmp(a, b) < 0;
+FILE* createFile( char* path ){
+    FILE* file = fopen(path, "r+");
+    if (!file){
+        perror("Erro ao abrir o arquivo.");
+        return NULL;
+    }
+    return file;
 }
 
 csv_t* inicializeCSV( char* path ){
@@ -32,11 +17,7 @@ csv_t* inicializeCSV( char* path ){
         return NULL;
     }
 
-    csv->csv_file = fopen(path, "r");
-    if (!csv->csv_file){
-        perror("Erro ao abrir o arquivo.");
-        return NULL;
-    }
+    csv->csv_file = createFile(path);
 
     csv->headerNames = NULL;
     csv->headerTypes = NULL;
@@ -226,8 +207,26 @@ int showFile( char*** matrix, int* index, int lineCount, int columnsCount ){
     return 1;
 }
 
-int filterFile( csv_t* csv, int index, char* value, int (*func)(char* a, char* b)){
+void conditionalFree( csv_t* csv, char*** newMatrix, int* index, int newLineCount ){
+    for (int i = 0; i < csv->lineCount; i++){
+        if (index[i] == -1){
+            for (int j = 0; j < csv->columnsCount; j++){
+                free(csv->matrix[i][j]);
+            }
+            free(csv->matrix[i]);
+        }
+    }
+    free(csv->matrix);
+    free(csv->index);
 
+    csv->lineCount = newLineCount;
+    csv->matrix = newMatrix;
+    csv->index = index;
+}
+
+
+int filterFile( csv_t* csv, int index, char* value, int (*func)(char* a, char* b)){
+    char choice;
     char ***aux = (char***) malloc(csv->lineCount * sizeof(char**));
     int auxIndex[csv->lineCount];
     int newLineCount = 1;
@@ -258,13 +257,33 @@ int filterFile( csv_t* csv, int index, char* value, int (*func)(char* a, char* b
 
     showFile(aux, auxIndex, newLineCount, csv->columnsCount);
 
+    printf("Deseja gravar um arquivo com os dados filtrados? [S|N]: ");
+    scanf("%c", &choice);
+
+    // Caso o usuario escolha salvar o arquivo
+    if (choice == 'S'){
+        // to do (SAVE FILE AND POPULATE IT)
+    } 
+
+    getchar();
+
+    printf("Deseja descartar os dados originais? [S|N]: ");
+    scanf("%c", &choice);
+    if (choice == 'S'){
+        conditionalFree(csv, aux, auxIndex, newLineCount);
+        return 1;
+    }
+    free(aux);
+
     return 1;
 }
 
 void filterEntry( csv_t* csv ){
     char ctrl[3 * sizeof(char)];
+    char choice;
     char column[STRING_BUFFER];
     char value[STRING_BUFFER];
+
     unsigned int i = 0;
 
     printf("\nEntre com a variável: ");
@@ -274,8 +293,10 @@ void filterEntry( csv_t* csv ){
     //Remove o /n
     column[strlen(column) - 1] = '\0';
 
+    // Encontra a coluna a ser filtrada
     while (i < csv->columnsCount && eq(csv->headerNames[i], column) != 1) i++;
 
+    // Se a variável não for encontrada
     if (i == csv->columnsCount && eq(csv->headerNames[i-1], column) != 1) {
         perror("Variável não encontrada.");
         return;
@@ -289,12 +310,15 @@ void filterEntry( csv_t* csv ){
     fgets(value, sizeof(value), stdin);
     printf("\n");
 
-    if (eq(ctrl, "==")) filterFile( csv, i, value, eq);
-    else if(eq(ctrl, "!=")) filterFile( csv, i, value, neq);
+    // define o operador
+    if      (eq(ctrl, "==")) filterFile( csv, i, value, eq);
+    else if (eq(ctrl, "!=")) filterFile( csv, i, value, neq);
     else if (eq(ctrl, ">=")) filterFile( csv, i, value, egt);
-    else if (eq(ctrl, ">")) filterFile( csv, i, value, gt);
+    else if (eq(ctrl, "> ")) filterFile( csv, i, value, gt);
     else if (eq(ctrl, "<=")) filterFile( csv, i, value, elt);
-    else if (eq(ctrl, "<")) filterFile( csv, i, value, lt);
+    else if (eq(ctrl, "< ")) filterFile( csv, i, value, lt);
+
+    return;
 }
 
 
@@ -310,8 +334,7 @@ void fileSummary( csv_t* csv ){
 void freeMatrix( char*** matrix, unsigned int columnsCount, unsigned int lineCount ){
     for (unsigned int i = 0; i < lineCount; i++){
         for (unsigned int j = 0; j < columnsCount; j++){
-            if (matrix[i][j])
-                free(matrix[i][j]);
+            free(matrix[i][j]);
         }
         free(matrix[i]);
     }
