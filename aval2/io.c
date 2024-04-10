@@ -4,6 +4,10 @@ int eq(char* a, char* b){
     return strcmp(a, b) == 0;
 }
 
+int neq(char* a, char* b){
+    return strcmp(a, b) != 0;
+}
+
 int egt(char* a, char* b){
     return strcmp(a, b) >= 0;
 }
@@ -33,12 +37,6 @@ csv_t* inicializeCSV( char* path ){
         perror("Erro ao abrir o arquivo.");
         return NULL;
     }
-
-    // csv->buffer = (char*) malloc(CSV_BUFFER * sizeof(char));
-    // if (!csv->buffer){
-    //     perror("Alocação de memória falhou.");
-    //     return NULL;
-    // }
 
     csv->headerNames = NULL;
     csv->headerTypes = NULL;
@@ -169,86 +167,116 @@ void formatAsTable( char** f, int* maxStrlen, unsigned int columnsCount, char** 
     for(; i < columnsCount; i++) f[i][0] = '\0';
 }
 
-int showFile( csv_t* csv ){
-    char* f[csv->columnsCount];
+int showFile( char*** matrix, int* index, int lineCount, int columnsCount ){
+    char* f[columnsCount];
     int* maxStrlen;
 
-    maxStrlen = (int *)malloc(csv->columnsCount * sizeof(int));
+    maxStrlen = (int *)malloc(columnsCount * sizeof(int));
     if (maxStrlen == NULL) {
         perror("Memory allocation failed");
         return 0;
     }
 
-    for (unsigned int j = 0; j < csv->columnsCount; j++) {
+    for (unsigned int j = 0; j < columnsCount; j++) {
         maxStrlen[j] = 0;
 
-        for (unsigned int i = 0; i < csv->lineCount; i++) {
-            int current = strlen(csv->matrix[i][j]);
+        for (unsigned int i = 0; i < lineCount; i++) {
+            int current = strlen(matrix[i][j]);
             if (current > maxStrlen[j]) {
                 maxStrlen[j] = current;
             }
         }
     }
 
-    for(int i = 0; i < csv->columnsCount; i++) f[i] = (char*) malloc(maxStrlen[i] + 1);
-    char aux[2* sizeof(long int)];
+    for(int i = 0; i < columnsCount; i++) f[i] = (char*) malloc(maxStrlen[i] + 1);
 
-    if (csv->lineCount <= 10){
-        for (int i = 0; i < csv->lineCount; i++){
-            formatAsTable(f, maxStrlen, csv->columnsCount, csv->matrix[i]);
+    if (lineCount <= 10){
+        for (int i = 0; i < lineCount; i++){
+            formatAsTable(f, maxStrlen, columnsCount, matrix[i]);
 
             // sprintf(aux, "%d", i-1);
             // printf("%-*s", csv->columnsCount, i == 0? " " : aux);
-            printf("%-*d", csv->columnsCount, csv->index[i]);
+            printf("%-*d", columnsCount, index[i]);
 
-            for (int j = 0; j < csv->columnsCount; j++)
+            for (int j = 0; j < columnsCount; j++)
                 printf("\t%s", f[j]);
             printf("\n");
         }
     } 
     else {
-        for (int i = 0; i < csv->lineCount; i++){
-            if (i <= 5 || i >= csv->lineCount-5){
-                formatAsTable(f, maxStrlen, csv->columnsCount, csv->matrix[i]);
+        for (int i = 0; i < lineCount; i++){
+            if (i <= 5 || i >= lineCount-5){
+                formatAsTable(f, maxStrlen, columnsCount, matrix[i]);
 
                 // sprintf(aux, "%d", i-1);                 
                 // printf("%-*s", csv->columnsCount, i == 0 ? " " : aux);
-                printf("%-*d", csv->columnsCount, csv->index[i]);
+                printf("%-*d", columnsCount, index[i]);
 
-                for (int j = 0; j < csv->columnsCount; j++)
+                for (int j = 0; j < columnsCount; j++)
                     printf("\t%s", f[j]);
                 printf("\n");
             }
         }
 
         free(maxStrlen); 
-        for (int i = 0; i < csv->columnsCount; i++) free(f[i]);
+        for (int i = 0; i < columnsCount; i++) free(f[i]);
     }
 
-    printf("[%d rows] x [%d columns]", csv->lineCount-1, csv->columnsCount);
+    printf("[%d rows] x [%d columns]", lineCount-1, columnsCount);
     return 1;
 }
 
-int filterFile( csv_t* csv, int (*func)(char* a, char* b)){
-    printf("oi");
+int filterFile( csv_t* csv, int index, char* value, int (*func)(char* a, char* b)){
+
+    char ***aux = (char***) malloc(csv->lineCount * sizeof(char**));
+    int auxIndex[csv->lineCount];
+    int newLineCount = 1;
+
+    if (!aux){
+        perror("Alocação de memória falhou.");
+        return 0;
+    }
+
+    // Headers
+    aux[0] = csv->matrix[0];
+    auxIndex[0] = csv->index[0];
+    for (unsigned int j = 0; j < csv->columnsCount; j++){
+        aux[0][j] = csv->headerNames[j];
+    }
+
+    for (unsigned int i = 1; i < csv->lineCount; i++){
+        if (func(csv->matrix[i][index], value)) {
+
+            aux[newLineCount] = csv->matrix[i];
+            auxIndex[newLineCount] = csv->index[i];
+            for (unsigned int j = 0; j < csv->columnsCount; j++){
+                aux[newLineCount][j] = csv->matrix[i][j];
+            }
+            newLineCount++;
+        }
+    }
+
+    showFile(aux, auxIndex, newLineCount, csv->columnsCount);
+
+    return 1;
 }
 
 void filterEntry( csv_t* csv ){
     char ctrl[3 * sizeof(char)];
     char column[STRING_BUFFER];
+    char value[STRING_BUFFER];
     unsigned int i = 0;
 
     printf("\nEntre com a variável: ");
     fgets(column, STRING_BUFFER, stdin);
     getchar();
 
-    while (i < csv->columnsCount && eq(csv->headerNames[i], column) != 1){
-        printf("%d", eq(csv->headerNames[i], column));
-        printf("%s, %s", csv->headerNames[i], column);
-        i++;
-    }
+    //Remove o /n
+    column[strlen(column) - 1] = '\0';
 
-    if (i == csv->columnsCount){
+    while (i < csv->columnsCount && eq(csv->headerNames[i], column) != 1) i++;
+
+    if (i == csv->columnsCount && eq(csv->headerNames[i-1], column) != 1) {
         perror("Variável não encontrada.");
         return;
     }
@@ -256,11 +284,17 @@ void filterEntry( csv_t* csv ){
     printf("Escolha um filtro ( == > >= < <= != ): ");
     fgets(ctrl, sizeof(ctrl), stdin);
 
-    if (eq(ctrl, "==")) filterFile( csv, eq);
-    else if (eq(ctrl, ">=")) filterFile( csv, egt);
-    else if (eq(ctrl, ">")) filterFile( csv, gt);
-    else if (eq(ctrl, "<=")) filterFile( csv, elt);
-    else if (eq(ctrl, "<")) filterFile( csv, lt);
+    getchar();
+    printf("Digite um valor: ");
+    fgets(value, sizeof(value), stdin);
+    printf("\n");
+
+    if (eq(ctrl, "==")) filterFile( csv, i, value, eq);
+    else if(eq(ctrl, "!=")) filterFile( csv, i, value, neq);
+    else if (eq(ctrl, ">=")) filterFile( csv, i, value, egt);
+    else if (eq(ctrl, ">")) filterFile( csv, i, value, gt);
+    else if (eq(ctrl, "<=")) filterFile( csv, i, value, elt);
+    else if (eq(ctrl, "<")) filterFile( csv, i, value, lt);
 }
 
 

@@ -43,7 +43,7 @@ int main(int argc, char** argv){
                 fileSummary(csv);
                 break;
             case '2':
-                showFile(csv);
+                showFile(csv->matrix, csv->index, csv->lineCount, csv->columnsCount);
                 break;
             case '3':
                 filterEntry(csv);

@@ -7,11 +7,9 @@
 #include <ctype.h>
 
 /*  variáveis globais   */
-#define STRING_BUFFER 50
+#define STRING_BUFFER[50]
 #define CSV_BUFFER 1024
 #define DELIMITER ","
-
-typedef char string[STRING_BUFFER];
 
 
 /*  struct do csv   */
@@ -51,6 +49,7 @@ int readCSV( csv_t *csv );
 
 /*  Funções de filtro   */
 int eq(char* a, char* b);     // a igual b
+int neq(char* a, char* b);    // a diferente de b
 int egt(char* a, char* b);    // a maior ou igual a b
 int gt(char* a, char* b);     // a maior que b 
 int elt(char* a, char* b);   // a menor ou igual a b
@@ -64,7 +63,7 @@ int lt(char* a, char* b);    // a menor que b
 void formatAsTable( char **f, int* maxStrlen, unsigned int columnsCount, char** string );
 
 /*  Constrói o resumo dos 5 primeiros itens e últimos 5 itens   */
-int showFile( csv_t *csv );
+int showFile( char*** matrix, int* index, int lineCount, int columnsCount );
 
 /* --------------------------------------- */
 
@@ -78,7 +77,7 @@ void fileSummary( csv_t *csv );
 /*  Funcoes opcao 3 */
 
 /*  Filta as linhas com base em alguma comparação   */
-int filterFile( csv_t* csv, int (*func) (char*, char*) );
+int filterFile( csv_t* csv, int index, char* value, int (*func)(char* a, char* b) );
 
 /*  Controla a entrada do usuario */
 void filterEntry( csv_t* );
