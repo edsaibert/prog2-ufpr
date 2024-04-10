@@ -37,8 +37,6 @@ FILE* createFile( char* path, char* mode );
 /*   inicializeCSV  */
 csv_t* inicializeCSV( char* path );
 
-int populateFile( csv_t* csv );
-
 /*  Retorna o tamanho do arquivo com pase em FSEEK e FTELL  */
 int fileSize( FILE* csv_file );
 
@@ -78,6 +76,11 @@ int filterFile( csv_t* csv, int index, char* value, int (*func)(char* a, char* b
 
 /*  Controla a entrada do usuario */
 void filterEntry( csv_t* );
+
+/* --------------------------------------- */
+/*  Funcoes opcao 8 */
+
+void populateFile( char*** matrix, int lineCount, int columnsCount );
 
 /* --------------------------------------- */
 

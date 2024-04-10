@@ -222,6 +222,25 @@ int showFile( char*** matrix, int* index, int lineCount, int columnsCount ){
     return 1;
 }
 
+// Popula um arquivo com os dados de uma matriz
+void populateFile( char*** matrix, int lineCount, int columnsCount ){
+    char path[STRING_BUFFER];
+
+    printf("Deseja descartar os dados originais? [S|N]: ");
+    fgets(path, STRING_BUFFER, stdin);
+    printf("\n");
+
+    FILE* file = createFile(path, "w+");
+    for (unsigned int i = 0; i < lineCount; i++){
+        for (unsigned int j = 0; j < columnsCount; j++){
+            fprintf(file, "%s", matrix[i][j]);
+            if (j != columnsCount - 1) fprintf(file, ",");
+        }
+    }
+
+    fclose(file);
+};
+
 // Free somente nas linhas que não me interessam (que não estam em index)
 void conditionalFree( csv_t* csv, char*** newMatrix, int* index, int newLineCount ){
     for (int i = 0; i < csv->lineCount; i++){
@@ -242,7 +261,7 @@ void conditionalFree( csv_t* csv, char*** newMatrix, int* index, int newLineCoun
 // Função que filta o arquivo
 int filterFile( csv_t* csv, int index, char* value, int (*func)(char* a, char* b)){
     char choice;
-    char ***aux = (char***) malloc(csv->lineCount * sizeof(char**));
+    char ***aux = (char***) malloc(csv->lineCount * csv->columnsCount * sizeof(char));
     int auxIndex[csv->lineCount];
     int newLineCount = 1;
 
@@ -274,24 +293,25 @@ int filterFile( csv_t* csv, int index, char* value, int (*func)(char* a, char* b
     showFile(aux, auxIndex, newLineCount, csv->columnsCount);
 
     printf("\nDeseja gravar um arquivo com os dados filtrados? [S|N]: ");
-    scanf("%c", &choice);
+    scanf(" %c", &choice);
 
     // Caso o usuario escolha salvar o arquivo
     if (choice == 'S'){
-        // to do (SAVE FILE AND POPULATE IT)
+        populateFile(aux, newLineCount, csv->columnsCount);
     } 
 
-    getchar();
-
     printf("Deseja descartar os dados originais? [S|N]: ");
-    scanf("%c", &choice);
+    scanf(" %c", &choice);
+
     if (choice == 'S'){
         conditionalFree(csv, aux, auxIndex, newLineCount);
         return 1;
     }
     printf("\n");
 
+    // Free da matriz auxiliar
     free(aux);
+
     return 1;
 }
 
