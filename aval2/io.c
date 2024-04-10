@@ -173,7 +173,7 @@ int showFile( char*** matrix, int* index, int lineCount, int columnsCount ){
 
     maxStrlen = (int *)malloc(columnsCount * sizeof(int));
     if (maxStrlen == NULL) {
-        perror("Memory allocation failed");
+        perror("Alocação de memória falhou.");
         return 0;
     }
 
@@ -217,10 +217,10 @@ int showFile( char*** matrix, int* index, int lineCount, int columnsCount ){
                 printf("\n");
             }
         }
-
-        free(maxStrlen); 
-        for (int i = 0; i < columnsCount; i++) free(f[i]);
     }
+    for (int i = 0; i < columnsCount; i++)
+        free(f[i]);
+    free(maxStrlen);
 
     printf("[%d rows] x [%d columns]", lineCount-1, columnsCount);
     return 1;
@@ -241,7 +241,7 @@ int filterFile( csv_t* csv, int index, char* value, int (*func)(char* a, char* b
     aux[0] = csv->matrix[0];
     auxIndex[0] = csv->index[0];
     for (unsigned int j = 0; j < csv->columnsCount; j++){
-        aux[0][j] = csv->headerNames[j];
+        aux[0][j] = csv->matrix[0][j];
     }
 
     for (unsigned int i = 1; i < csv->lineCount; i++){
@@ -310,7 +310,8 @@ void fileSummary( csv_t* csv ){
 void freeMatrix( char*** matrix, unsigned int columnsCount, unsigned int lineCount ){
     for (unsigned int i = 0; i < lineCount; i++){
         for (unsigned int j = 0; j < columnsCount; j++){
-            free(matrix[i][j]);
+            if (matrix[i][j])
+                free(matrix[i][j]);
         }
         free(matrix[i]);
     }
