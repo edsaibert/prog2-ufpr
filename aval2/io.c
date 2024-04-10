@@ -1,7 +1,8 @@
 #include "io.h"
 
-FILE* createFile( char* path ){
-    FILE* file = fopen(path, "r+");
+// Cria um arquivo, ou abre um arquivo existente
+FILE* createFile( char* path, char* mode ){
+    FILE* file = fopen(path, mode);
     if (!file){
         perror("Erro ao abrir o arquivo.");
         return NULL;
@@ -9,6 +10,7 @@ FILE* createFile( char* path ){
     return file;
 }
 
+// Inicializa a estrutura csv_t
 csv_t* inicializeCSV( char* path ){
 
     csv_t* csv = (csv_t*) malloc(sizeof(csv_t));
@@ -17,7 +19,7 @@ csv_t* inicializeCSV( char* path ){
         return NULL;
     }
 
-    csv->csv_file = createFile(path);
+    csv->csv_file = createFile(path, "r");
 
     csv->headerNames = NULL;
     csv->headerTypes = NULL;
@@ -31,6 +33,7 @@ csv_t* inicializeCSV( char* path ){
 };
 
 
+// Função que lê os headers e também determina seu tipo
 int addToHeader( csv_t* csv ){
     // Alocação do vetor
     csv->headerTypes = (char**) malloc(csv->columnsCount * sizeof(char*));
@@ -70,7 +73,8 @@ int addToHeader( csv_t* csv ){
     }
     return 1;
 }
-
+ 
+// Função que adiciona os indexes de cada linha
 int addToIndex( csv_t* csv ){
     if (!(csv->index = (int*) malloc(csv->lineCount * sizeof(int)))) return 0; 
 
@@ -81,6 +85,7 @@ int addToIndex( csv_t* csv ){
     return 1;
 }
 
+// Retorna o tamanho do arquivo
 int fileSize( FILE* csv_file ){
 
     if (csv_file == NULL) return 0;
@@ -94,7 +99,7 @@ int fileSize( FILE* csv_file ){
     return p;
 }
 
-
+// Função que aloca o arquivo CSV em memória de programa, por meio de uma matriz
 int readCSV( csv_t *csv ){
     char line[CSV_BUFFER];
     unsigned long int size = fileSize(csv->csv_file);
@@ -134,6 +139,7 @@ int readCSV( csv_t *csv ){
 
 }
 
+// Função que formata cada item da tabela conforme o maior item de sua coluna
 void formatAsTable( char** f, int* maxStrlen, unsigned int columnsCount, char** string ){
     unsigned int i = 0;
     unsigned int j;
@@ -148,6 +154,7 @@ void formatAsTable( char** f, int* maxStrlen, unsigned int columnsCount, char** 
     for(; i < columnsCount; i++) f[i][0] = '\0';
 }
 
+// Função que descreve os itens do arquivo CSV por meio de um DataFrame
 int showFile( char*** matrix, int* index, int lineCount, int columnsCount ){
     char* f[columnsCount];
     int* maxStrlen;
@@ -158,6 +165,18 @@ int showFile( char*** matrix, int* index, int lineCount, int columnsCount ){
         return 0;
     }
 
+    // Se a tabela for vazia
+    if (lineCount == 1){
+        printf("Empty DataFrame\n");
+        printf("Columns: [");
+        for (int i = 0; i < columnsCount-1; i++){printf("%s, ", matrix[0][i]);}
+        printf("%s]\n", matrix[0][columnsCount-1]);
+        printf("Index: []");
+
+        return 1;
+    }
+
+    // Caso não esteja
     for (unsigned int j = 0; j < columnsCount; j++) {
         maxStrlen[j] = 0;
 
@@ -175,8 +194,6 @@ int showFile( char*** matrix, int* index, int lineCount, int columnsCount ){
         for (int i = 0; i < lineCount; i++){
             formatAsTable(f, maxStrlen, columnsCount, matrix[i]);
 
-            // sprintf(aux, "%d", i-1);
-            // printf("%-*s", csv->columnsCount, i == 0? " " : aux);
             printf("%-*d", columnsCount, index[i]);
 
             for (int j = 0; j < columnsCount; j++)
@@ -189,8 +206,6 @@ int showFile( char*** matrix, int* index, int lineCount, int columnsCount ){
             if (i <= 5 || i >= lineCount-5){
                 formatAsTable(f, maxStrlen, columnsCount, matrix[i]);
 
-                // sprintf(aux, "%d", i-1);                 
-                // printf("%-*s", csv->columnsCount, i == 0 ? " " : aux);
                 printf("%-*d", columnsCount, index[i]);
 
                 for (int j = 0; j < columnsCount; j++)
@@ -207,6 +222,7 @@ int showFile( char*** matrix, int* index, int lineCount, int columnsCount ){
     return 1;
 }
 
+// Free somente nas linhas que não me interessam (que não estam em index)
 void conditionalFree( csv_t* csv, char*** newMatrix, int* index, int newLineCount ){
     for (int i = 0; i < csv->lineCount; i++){
         if (index[i] == -1){
@@ -217,14 +233,13 @@ void conditionalFree( csv_t* csv, char*** newMatrix, int* index, int newLineCoun
         }
     }
     free(csv->matrix);
-    free(csv->index);
 
     csv->lineCount = newLineCount;
     csv->matrix = newMatrix;
-    csv->index = index;
 }
 
 
+// Função que filta o arquivo
 int filterFile( csv_t* csv, int index, char* value, int (*func)(char* a, char* b)){
     char choice;
     char ***aux = (char***) malloc(csv->lineCount * sizeof(char**));
@@ -248,6 +263,7 @@ int filterFile( csv_t* csv, int index, char* value, int (*func)(char* a, char* b
 
             aux[newLineCount] = csv->matrix[i];
             auxIndex[newLineCount] = csv->index[i];
+            printf("%d\n", auxIndex[newLineCount]);
             for (unsigned int j = 0; j < csv->columnsCount; j++){
                 aux[newLineCount][j] = csv->matrix[i][j];
             }
@@ -257,7 +273,7 @@ int filterFile( csv_t* csv, int index, char* value, int (*func)(char* a, char* b
 
     showFile(aux, auxIndex, newLineCount, csv->columnsCount);
 
-    printf("Deseja gravar um arquivo com os dados filtrados? [S|N]: ");
+    printf("\nDeseja gravar um arquivo com os dados filtrados? [S|N]: ");
     scanf("%c", &choice);
 
     // Caso o usuario escolha salvar o arquivo
@@ -265,17 +281,21 @@ int filterFile( csv_t* csv, int index, char* value, int (*func)(char* a, char* b
         // to do (SAVE FILE AND POPULATE IT)
     } 
 
+    getchar();
+
     printf("Deseja descartar os dados originais? [S|N]: ");
     scanf("%c", &choice);
     if (choice == 'S'){
         conditionalFree(csv, aux, auxIndex, newLineCount);
         return 1;
     }
-    free(aux);
+    printf("\n");
 
+    free(aux);
     return 1;
 }
 
+// Controla a entrada principal para o filtro
 void filterEntry( csv_t* csv ){
     char ctrl[3 * sizeof(char)];
     char choice;
@@ -286,7 +306,6 @@ void filterEntry( csv_t* csv ){
 
     printf("\nEntre com a variável: ");
     fgets(column, STRING_BUFFER, stdin);
-    getchar();
 
     //Remove o /n
     column[strlen(column) - 1] = '\0';
@@ -320,6 +339,7 @@ void filterEntry( csv_t* csv ){
 }
 
 
+// Retorna o summary das colunas do arquivo
 void fileSummary( csv_t* csv ){
     for (unsigned int i = 0; i < csv->columnsCount; i++){
         printf("\n%s ", csv->headerNames[i]);
@@ -329,6 +349,7 @@ void fileSummary( csv_t* csv ){
     printf("\n");
 }
 
+// Faz o free de uma matriz qualquer
 void freeMatrix( char*** matrix, unsigned int columnsCount, unsigned int lineCount ){
     for (unsigned int i = 0; i < lineCount; i++){
         for (unsigned int j = 0; j < columnsCount; j++){
@@ -339,6 +360,7 @@ void freeMatrix( char*** matrix, unsigned int columnsCount, unsigned int lineCou
     free(matrix);
 };
 
+// Faz o free dos headers do csv_t
 void freeHeader( char** types, char** names, unsigned int columnsCount ){
     for (unsigned int i = 0; i < columnsCount; i++){
         free(types[i]);
@@ -348,6 +370,7 @@ void freeHeader( char** types, char** names, unsigned int columnsCount ){
     free(names);
 }
 
+// Faz o free do CSV
 void freeCSV( csv_t* csv ){
     freeMatrix(csv->matrix, csv->columnsCount, csv->lineCount);
     freeHeader(csv->headerTypes, csv->headerNames, csv->columnsCount);

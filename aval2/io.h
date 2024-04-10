@@ -32,7 +32,7 @@ typedef struct csv{
 /* Funções de inicializacao */
 
 /*  Abre ou cria um arquivo */
-FILE* createFile( char* path );
+FILE* createFile( char* path, char* mode );
 
 /*   inicializeCSV  */
 csv_t* inicializeCSV( char* path );
