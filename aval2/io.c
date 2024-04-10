@@ -265,8 +265,6 @@ int filterFile( csv_t* csv, int index, char* value, int (*func)(char* a, char* b
         // to do (SAVE FILE AND POPULATE IT)
     } 
 
-    getchar();
-
     printf("Deseja descartar os dados originais? [S|N]: ");
     scanf("%c", &choice);
     if (choice == 'S'){
