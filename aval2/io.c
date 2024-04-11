@@ -226,7 +226,8 @@ int showFile( char*** matrix, int* index, int lineCount, int columnsCount ){
 void populateFile( char*** matrix, int lineCount, int columnsCount ){
     char path[STRING_BUFFER];
 
-    printf("Deseja descartar os dados originais? [S|N]: ");
+    printf("Entre com o nome do arquivo: ");
+    getchar();
     fgets(path, STRING_BUFFER, stdin);
     printf("\n");
 
@@ -238,6 +239,7 @@ void populateFile( char*** matrix, int lineCount, int columnsCount ){
         }
     }
 
+    printf("Arquivo gravado com sucesso.\n");
     fclose(file);
 };
 
