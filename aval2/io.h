@@ -6,8 +6,8 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "stringItem.h"
-#include "floatItem.h"
+#include "stringItem.h"     // Funções de comparação de strings
+#include "floatItem.h"      //  de comparação de floats
 
 #define CSV_BUFFER 1024
 #define DELIMITER ","
@@ -18,12 +18,12 @@ typedef struct csv{
 
     FILE *csv_file;                  /*  Arquivo no qual estão os dados separados por um delimitador */
     char ***matrix;                  /*  Matriz que irá facilitar o uso dos dados no programa    */
-    unsigned long int fileSize;           /*  Número de bytes do programa */
+    unsigned long int fileSize;      /*  Número de bytes do programa */
     unsigned int columnsCount;       /*  Número de colunas da matriz */
-    unsigned long int lineCount;          /*  Número de linhas da matriz  */
+    unsigned long int lineCount;     /*  Número de linhas da matriz  */
     char delimiter[2];               /*  Delimitador dos dados   */
-    int *headerTypes;              /*  Tipos de dados da tabela   */
-    long int  *index;                     /*  Vetor com a coluna index*/
+    int *headerTypes;                /*  Tipos de dados da tabela   */
+    long int  *index;                /*  Vetor com a coluna index*/
 
 } csv_t;
 
@@ -74,8 +74,20 @@ void fileSummary( csv_t *csv );
 /*  Filta as linhas com base em alguma comparação   */
 int filterFile( csv_t* csv, long int index, char* value, int (*func)(char* a, char* b) );
 
+/* Print de uma mensagem seguida de um input do usuario */
+char* userInput( char* message, int size );
+
+/* Função que busca uma coluna a ser filtrada. Se encontrada, retorna o indice */
+int columnSearch( csv_t* csv, char* column );
+
 /*  Controla a entrada do usuario */
 void filterEntry( csv_t* );
+
+/* --------------------------------------- */
+/*  Funcoes opcao 4 */
+
+/*  Ordena as linhas do csv com base em uma coluna   */
+void sortFile( csv_t* csv );
 
 /* --------------------------------------- */
 /*  Funcoes opcao 8 */

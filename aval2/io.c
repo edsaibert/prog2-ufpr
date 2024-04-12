@@ -208,7 +208,7 @@ int showFile( char*** matrix, long int* index, unsigned long int lineCount, unsi
         free(f[i]);
     free(maxStrlen);
 
-    printf("[%ld rows] x [%d columns]", lineCount-1, columnsCount);
+    printf("[%ld rows] x [%d columns]\n", lineCount-1, columnsCount);
     return 1;
 }
 
@@ -262,15 +262,42 @@ void conditionalFree( csv_t* csv, char*** newMatrix, long int* index, unsigned l
 
     // free dos ultimos caracteres
     free(csv->matrix);
-
     csv->lineCount = newLineCount;
     csv->matrix = newMatrix;
 }
 
+/* Print de uma mensagem seguida de um input do usuario */
+char* userInput( char* message, int size ){
+    char *aux = (char*) malloc(size * sizeof(char));
+    memset(aux, 0, size);
+
+    printf("%s", message);
+    fgets(aux, size, stdin);
+    //Remove o /n
+    aux[strlen(aux) - 1] = '\0';
+
+    printf("\n");
+    return aux;
+}
+
+// Função que busca a coluna a ser filtrada. Se encontrada, retorna o índice
+int columnSearch( csv_t* csv, char* column ){
+    unsigned int i = 0;
+
+    // Encontra a coluna a ser filtrada
+    while (i < csv->columnsCount && eq(csv->matrix[0][i], column) != 1) i++;
+
+    // Se a variável não for encontrada
+    if (i == csv->columnsCount && eq(csv->matrix[0][i-1], column) != 1) {
+        perror("Variável não encontrada.");
+        return -1;
+    }
+    return i;
+}
 
 // Função que filta o arquivo
 int filterFile( csv_t* csv, long int index, char* value, int (*func)(char* a, char* b)){
-    char choice;
+    char *choice;
     char ***aux = (char***) malloc(csv->lineCount * sizeof(char**));
 
     long int *auxIndex = (long int*) malloc(csv->lineCount * sizeof(long int));
@@ -306,68 +333,45 @@ int filterFile( csv_t* csv, long int index, char* value, int (*func)(char* a, ch
 
     showFile(aux, auxIndex, newLineCount, csv->columnsCount);
 
-    printf("\nDeseja gravar um arquivo com os dados filtrados? [S|N]: ");
-    scanf(" %c", &choice);
-
+    choice = userInput("Deseja gravar um arquivo com os dados filtrados? [S|N]: ", 4 * sizeof(char));
     // Caso o usuario escolha salvar o arquivo
-    if (choice == 'S'){
+    if (choice[0] == 'S' || choice[0] == 's'){
         populateFile(aux, newLineCount, csv->columnsCount);
     } 
+    free(choice);
 
-    printf("Deseja descartar os dados originais? [S|N]: ");
-    scanf(" %c", &choice);
-
-    if (choice == 'S'){
+    choice = userInput("Deseja descartar os dados originais? [S|N]: ", 4 * sizeof(char));
+    if (choice[0] == 'S' || choice[0] == 's'){
         conditionalFree(csv, aux, mask, newLineCount);
     }
     printf("\n");
 
-    // Free da matriz auxiliar
-    // free(aux);
-
     free(auxIndex);
     free(mask);
+    free(choice);
 
     return 1;
 }
 
+
 // Controla a entrada principal para o filtro
 void filterEntry( csv_t* csv ){
-    char ctrl[3 * sizeof(char)];
-    char choice;
-    char column[STRING_BUFFER];
-    char value[STRING_BUFFER];
+    char *ctrl;
+    char *column;
+    char *value;
+    unsigned int i;
 
-    memset(column, 0, sizeof(column));
-    memset(value, 0, sizeof(value));
+    column = userInput("Entre com a variável: ", STRING_BUFFER);
 
-    unsigned int i = 0;
-
-    printf("\nEntre com a variável: ");
-    fgets(column, STRING_BUFFER, stdin);
-
-    //Remove o /n
-    column[strlen(column) - 1] = '\0';
-
-    // Encontra a coluna a ser filtrada
-    while (i < csv->columnsCount && eq(csv->matrix[0][i], column) != 1) i++;
-
+    i = columnSearch(csv, column);
     // Se a variável não for encontrada
-    if (i == csv->columnsCount && eq(csv->matrix[0][i-1], column) != 1) {
-        perror("Variável não encontrada.");
+    if (i == -1){
+        free(column);
         return;
     }
 
-    printf("Escolha um filtro ( == > >= < <= != ): ");
-    fgets(ctrl, sizeof(ctrl), stdin);
-
-    getchar();
-
-    printf("Digite um valor: ");
-    fgets(value, sizeof(value), stdin);
-
-    value[strlen(value)-1] = '\0'; // Remove o \n
-    printf("\n");
+    ctrl = userInput("Escolha um filtro ( == > >= < <= != ): ", 4 * sizeof(char));
+    value = userInput("Digite um valor: ", STRING_BUFFER);
 
     // Escolha do filtro
     if (csv->headerTypes[i-1] == 1){
@@ -386,10 +390,11 @@ void filterEntry( csv_t* csv ){
         else if (eq(ctrl, "<=")) filterFile(csv, i, value, elt);
         else if (eq(ctrl, "< ")) filterFile(csv, i, value, lt);
     }
-
+    free(column);
+    free(ctrl);
+    free(value);
     return;
 }
-
 
 // Retorna o summary das colunas do arquivo
 void fileSummary( csv_t* csv ){
@@ -405,6 +410,11 @@ void fileSummary( csv_t* csv ){
     printf("\n");
 }
 
+// Ordenacao de uma matriz
+void sortFile( csv_t* csv ){
+
+}
+
 // Faz o free de uma matriz qualquer
 void freeMatrix( char*** matrix, unsigned int columnsCount, unsigned long int lineCount ){
     for (unsigned long int i = 0; i < lineCount; i++){
@@ -415,13 +425,6 @@ void freeMatrix( char*** matrix, unsigned int columnsCount, unsigned long int li
     }
     free(matrix);
 };
-
-// Faz o free dos headers do csv_t
-// void freeHeader( char** types, unsigned int columnsCount ){
-//     for (unsigned int i = 0; i < columnsCount; i++)
-//         free(types[i]);
-//     free(types);
-// }
 
 // Faz o free do CSV
 void freeCSV( csv_t* csv ){

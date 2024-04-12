@@ -13,13 +13,13 @@ int fegt(char* a, char* b){
 };
 
 int fgt(char* a, char* b){
-    return atof(a) - atof(b) < 0.01;
+    return atof(a) - atof(b) > 0.01;
 };
 
 int felt(char* a, char* b){
-    return !fgt(a, b);
+    return atof(b) - atof(a) >= 0.01;
 };
 
 int flt(char* a, char* b){
-    return !fegt(a, b);
+    return atof(b) - atof(a) > 0.01;
 };
