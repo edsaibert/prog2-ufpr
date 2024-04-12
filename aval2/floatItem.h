@@ -2,6 +2,7 @@
 #define __FLOATITEM__
 
 #include <stdlib.h>
+#include <math.h>
 
 /* --------------------------------------- */
 /*  Funções de comparação entre floats   */

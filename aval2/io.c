@@ -370,7 +370,7 @@ void filterEntry( csv_t* csv ){
     printf("\n");
 
     // Escolha do filtro
-    if (csv->headerTypes[i] == 1){
+    if (csv->headerTypes[i-1] == 1){
         if (eq(ctrl, "=="))      filterFile(csv, i, value, feq);
         else if (eq(ctrl, "!=")) filterFile(csv, i, value, fneq);
         else if (eq(ctrl, ">=")) filterFile(csv, i, value, fegt);
