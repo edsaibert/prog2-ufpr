@@ -359,13 +359,14 @@ void filterEntry( csv_t* csv ){
     }
 
     printf("Escolha um filtro ( == > >= < <= != ): ");
-    if (fgets(ctrl, sizeof(ctrl), stdin)) printf("ok\n");
+    fgets(ctrl, sizeof(ctrl), stdin);
 
     getchar();
+
     printf("Digite um valor: ");
     fgets(value, sizeof(value), stdin);
 
-    value[strlen(value) - 1] = '\0'; // Remove o \n
+    value[strlen(value)-1] = '\0'; // Remove o \n
     printf("\n");
 
     // Escolha do filtro
