@@ -1,25 +1,35 @@
 #include "stringItem.h"
 
-int eq(char* a, char* b){
-    return strcmp(a, b) == 0;
-}
+int cmp(const void* a, const void* b){
+    float fa = *(const float*)a;
+    float fb = *(const float*)b;
+    return ((fa > fb) - (fa < fb));
+};
 
-int neq(char* a, char* b){
-    return strcmp(a, b) != 0;
-}
+int qs_cmp(const void* a, const void* b){
+    return strcmp(*((const char**) a), *((const char**) b)) ;
+};
 
-int egt(char* a, char* b){
-    return strcmp(a, b) >= 0;
-}
+int eq(const void* a, const void* b){
+    return cmp(a, b) == 0;
+};
 
-int gt(char* a, char* b){
-    return strcmp(a, b) > 0;
-}
+int neq(const void* a, const void* b){
+    return cmp(a, b) != 0;
+};
 
-int elt(char* a, char* b){
-    return strcmp(a, b) <= 0;
-}
+int egt(const void* a, const void* b){
+    return cmp(a, b) >= 0;
+};
 
-int lt(char* a, char* b){
-    return strcmp(a, b) < 0;
-}
+int gt(const void* a, const void* b){
+    return cmp(a, b) > 0;
+};
+
+int elt(const void* a, const void* b){
+    return cmp(a, b) <= 0;
+};
+
+int lt(const void* a, const void* b){
+    return cmp(a, b) < 0;
+};

@@ -6,9 +6,11 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "stringItem.h"     // Funções de comparação de strings
-#include "floatItem.h"      //  de comparação de floats
+// Funções de comparação entre strings 
+#include "stringItem.h"
 
+#define _GNU_SOURCE
+#define STRING_BUFFER 50
 #define CSV_BUFFER 1024
 #define DELIMITER ","
 
@@ -72,7 +74,7 @@ void fileSummary( csv_t *csv );
 /*  Funcoes opcao 3 */
 
 /*  Filta as linhas com base em alguma comparação   */
-int filterFile( csv_t* csv, long int index, char* value, int (*func)(char* a, char* b) );
+int filterFile( csv_t* csv, long int index, char* value, int (*func)(const void* a, const void* b) );
 
 /* Print de uma mensagem seguida de um input do usuario */
 char* userInput( char* message, int size );
@@ -84,9 +86,13 @@ int columnSearch( csv_t* csv, char* column );
 void filterEntry( csv_t* );
 
 /* --------------------------------------- */
-/*  Funcoes opcao 4 */
+/*  Funcoes opcao 5 */
+
+/*  Desloca os ponteiros    */
+void shiftPointers( char*** matrix, long int* index, unsigned long int lineCount);
 
 /*  Ordena as linhas do csv com base em uma coluna   */
+/*  Utiliza a função quicksort do libc  */
 void sortFile( csv_t* csv );
 
 /* --------------------------------------- */

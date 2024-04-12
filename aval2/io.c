@@ -296,7 +296,7 @@ int columnSearch( csv_t* csv, char* column ){
 }
 
 // Função que filta o arquivo
-int filterFile( csv_t* csv, long int index, char* value, int (*func)(char* a, char* b)){
+int filterFile( csv_t* csv, long int index, char* value, int (*func)(const void*, const void*)){
     char *choice;
     char ***aux = (char***) malloc(csv->lineCount * sizeof(char**));
 
@@ -373,23 +373,13 @@ void filterEntry( csv_t* csv ){
     ctrl = userInput("Escolha um filtro ( == > >= < <= != ): ", 4 * sizeof(char));
     value = userInput("Digite um valor: ", STRING_BUFFER);
 
-    // Escolha do filtro
-    if (csv->headerTypes[i-1] == 1){
-        if (eq(ctrl, "=="))      filterFile(csv, i, value, feq);
-        else if (eq(ctrl, "!=")) filterFile(csv, i, value, fneq);
-        else if (eq(ctrl, ">=")) filterFile(csv, i, value, fegt);
-        else if (eq(ctrl, "> ")) filterFile(csv, i, value, fgt);
-        else if (eq(ctrl, "<=")) filterFile(csv, i, value, felt);
-        else if (eq(ctrl, "< ")) filterFile(csv, i, value, flt);
-    }
-    else {
-        if (eq(ctrl, "=="))      filterFile(csv, i, value, eq);
-        else if (eq(ctrl, "!=")) filterFile(csv, i, value, neq);
-        else if (eq(ctrl, ">=")) filterFile(csv, i, value, egt);
-        else if (eq(ctrl, "> ")) filterFile(csv, i, value, gt);
-        else if (eq(ctrl, "<=")) filterFile(csv, i, value, elt);
-        else if (eq(ctrl, "< ")) filterFile(csv, i, value, lt);
-    }
+    if (eq(ctrl, "=="))      filterFile(csv, i, value, eq);
+    else if (eq(ctrl, "!=")) filterFile(csv, i, value, neq);
+    else if (eq(ctrl, ">=")) filterFile(csv, i, value, egt);
+    else if (eq(ctrl, "> ")) filterFile(csv, i, value, gt);
+    else if (eq(ctrl, "<=")) filterFile(csv, i, value, elt);
+    else if (eq(ctrl, "< ")) filterFile(csv, i, value, lt);
+
     free(column);
     free(ctrl);
     free(value);
@@ -410,10 +400,66 @@ void fileSummary( csv_t* csv ){
     printf("\n");
 }
 
-// Ordenacao de uma matriz
-void sortFile( csv_t* csv ){
+/* Desloca os pointeiros das linhas de acordo com os indexes devolvidos pelo quicksort */
+void shiftPointers( char*** matrix, long int* index, unsigned long int lineCount){
+    char **aux;
+    
+    for (unsigned long int i = 0; i < lineCount; i++){
+        aux = matrix[i];
+        matrix[i] = matrix[index[i]];
+        matrix[index[i]] = aux;
 
+        printf("%s\n", matrix[i][2]);
+    }
 }
+
+
+// Ordenacao de uma matriz (utiliza o qsort_t [libc])
+void sortFile( csv_t* csv ){
+    long int *auxIndex = (long int*) malloc(csv->lineCount * sizeof(long int));
+    char** column = (char**) malloc(csv->lineCount * sizeof(char*));
+    char* choice;
+
+    if (!auxIndex){
+        perror("Alocação de memória falhou.");
+        return;
+    }
+    // Copia o index para auxIndex
+    for (unsigned long int i = 0; i < csv->lineCount; i++) auxIndex[i] = csv->index[i];
+
+    choice = userInput("Entre com a variavel: ", STRING_BUFFER);
+
+    unsigned int i = columnSearch(csv, choice);
+    if (i == -1){
+        perror("Variável não encontrada.");
+        free(choice);
+        free(auxIndex);
+        return;
+    }
+    for (unsigned long int j = 0; j < csv->lineCount; j++){
+        column[j] = csv->matrix[j][i];
+    }
+    free(choice);
+
+    choice = userInput("Selecione uma opcao [A]scendente ou [D]escrescente: ", 4 * sizeof(char));
+    if (choice[0] == 'A' || choice[0] == 'a'){
+        // qsort_r(&column[0], csv->lineCount, sizeof(char*), qs_cmp, auxIndex);
+    }
+    else if (choice[0] == 'D' || choice[0] == 'd'){
+    //     qsort_r(&column[0], csv->lineCount, sizeof(char*), qs_cmp, auxIndex); 
+    }
+
+    // for (int j = 0; j < csv->lineCount; j++){
+    //     printf("%ld\n", auxIndex[j]);
+    //     printf("%s\n", column[j]);
+    // }
+    // shiftPointers(csv->matrix, auxIndex, csv->lineCount);
+
+    free(choice);
+    free(auxIndex);
+    free(column);
+}
+
 
 // Faz o free de uma matriz qualquer
 void freeMatrix( char*** matrix, unsigned int columnsCount, unsigned long int lineCount ){

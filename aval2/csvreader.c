@@ -48,6 +48,9 @@ int main(int argc, char** argv){
             case '3':
                 filterEntry(csv);
                 break;
+            case '5':
+                sortFile(csv);
+                break;
             case '9':
                 break;
             default:

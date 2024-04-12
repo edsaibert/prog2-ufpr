@@ -1,32 +1,37 @@
 #ifndef __STRINGITEM__
 #define __STRINGITEM__
 
-#define STRING_BUFFER 50
-
+#include <stdlib.h>
 #include <string.h>
 
 /* --------------------------------------- */
-
 /*  Funções de comparação entre strings   */
 
-// a igual a b 
-int eq(char* a, char* b);     
+/* Compara dois valores */
+int cmp(const void* a, const void* b);
 
-// a diferente de b
-int neq(char* a, char* b);    
+/* Compara dois valores para o qsort */
+int qs_cmp(const void* a, const void* b);
 
-// a maior ou igual a b
-int egt(char* a, char* b);   
+/* Compara se dois valores são iguais */
+int eq(const void* a, const void* b);
 
-// a maior que b
-int gt(char* a, char* b);     
+/* Compara se dois valores são diferentes */
+int neq(const void* a, const void* b);
 
-// a menor ou igual a b
-int elt(char* a, char* b);   
+/* Compara se um valor é maior ou igual ao outro */
+int egt(const void* a, const void* b);
 
-//  a menor que b
-int lt(char* a, char* b);   
+/* Compara se um valor é maior que o outro */
+int gt(const void* a, const void* b);
+
+/* Compara se um valor é menor ou igual ao outro */
+int elt(const void* a, const void* b);
+
+/* Compara se um valor é menor que o outro */
+int lt(const void* a, const void* b);
 
 /* --------------------------------------- */
 
 #endif
+
