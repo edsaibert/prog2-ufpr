@@ -133,7 +133,7 @@ int readCSV( csv_t *csv ){
 }
 
 // Função que formata cada item da tabela conforme o maior item de sua coluna
-void formatAsTable( char** f, int* maxStrlen, unsigned int columnsCount, char** string ){
+void formatAsTable( char** f, long unsigned int* maxStrlen, unsigned int columnsCount, char** string ){
     unsigned long int i = 0;
     unsigned int j;
 
@@ -148,11 +148,11 @@ void formatAsTable( char** f, int* maxStrlen, unsigned int columnsCount, char** 
 }
 
 // Função que descreve os itens do arquivo CSV por meio de um DataFrame
-int showFile( char*** matrix, unsigned long int* index, unsigned long int lineCount, unsigned int columnsCount ){
+int showFile( char*** matrix, long int* index, unsigned long int lineCount, unsigned int columnsCount ){
     char* f[columnsCount];
     unsigned long int* maxStrlen;
 
-    maxStrlen = (unsigned int *)malloc(columnsCount * sizeof(int));
+    maxStrlen = (unsigned long int *)malloc(columnsCount * sizeof(long int));
     if (maxStrlen == NULL) {
         perror("Alocação de memória falhou.");
         return 0;
@@ -190,7 +190,7 @@ int showFile( char*** matrix, unsigned long int* index, unsigned long int lineCo
 
             // Se for a primeira linha, imprime os headers
             if (i == 0) printf("%-*s", columnsCount, "");
-            else printf("%-*d", columnsCount, index[i-1]);
+            else printf("%-*ld", columnsCount, index[i-1]);
 
             for (unsigned int j = 0; j < columnsCount; j++)
                 printf("\t%s", f[j]);
@@ -204,7 +204,7 @@ int showFile( char*** matrix, unsigned long int* index, unsigned long int lineCo
 
                 // Se for a primeira linha, imprime os headers
                 if (i == 0) printf("%-*s", columnsCount, "");
-                else printf("%-*d", columnsCount, index[i - 1]);
+                else printf("%-*ld", columnsCount, index[i - 1]);
 
                 for (int j = 0; j < columnsCount; j++)
                     printf("\t%s", f[j]);
@@ -216,7 +216,7 @@ int showFile( char*** matrix, unsigned long int* index, unsigned long int lineCo
         free(f[i]);
     free(maxStrlen);
 
-    printf("[%d rows] x [%d columns]", lineCount-1, columnsCount);
+    printf("[%ld rows] x [%d columns]", lineCount-1, columnsCount);
     return 1;
 }
 
@@ -241,28 +241,37 @@ void populateFile( char*** matrix, unsigned long int lineCount, unsigned int col
     fclose(file);
 };
 
-int notIn(unsigned long int i, unsigned long int* index, unsigned long int lineCount){
-    for (unsigned long int j = 0; j < lineCount; j++){
+int notIn(unsigned long int i, long int* index, unsigned long int lineCount){
+    for (long int j = 0; j < lineCount; j++){
         if (index[j] == i) return 0;
     } 
     return 1;
 }
 
 // Free somente nas linhas que não me interessam (que não estam em index)
-void conditionalFree( csv_t* csv, char*** newMatrix, unsigned long int* index, unsigned long int newLineCount ){
+void conditionalFree( csv_t* csv, char*** newMatrix, long int* index, unsigned long int newLineCount ){
     for (unsigned long int i = 0; i < csv->lineCount; i++){
-        if (notIn(i, index, newLineCount)){
+        if (index[i] == -1){
 
             for (unsigned int j = 0; j < csv->columnsCount; j++){
-                if (csv->matrix[i][j] != NULL){
-                    free(csv->matrix[i][j]);
-                    csv->matrix[i][j] = NULL;
-                }
-            }
-            if (csv->matrix[i] != NULL){
-                free(csv->matrix[i]);
+                free(csv->matrix[i][j]);
+                csv->matrix[i][j] = NULL;
+        }
+            free(csv->matrix[i]);
+            csv->matrix[i] = NULL;
+        }
+    }
+
+    // Deslocar ponteiros não nulos para o começo
+    unsigned long int j = 0;
+    for (unsigned long int i = 0; i < csv->lineCount; i++){
+        if (csv->matrix[i] != NULL){
+            if (i != j){
+                csv->index[j] = csv->index[i];
+                csv->matrix[j] = csv->matrix[i];
                 csv->matrix[i] = NULL;
             }
+            j++;
         }
     }
 
@@ -275,15 +284,16 @@ void conditionalFree( csv_t* csv, char*** newMatrix, unsigned long int* index, u
 
 
 // Função que filta o arquivo
-int filterFile( csv_t* csv, unsigned long int index, char* value, int (*func)(char* a, char* b)){
+int filterFile( csv_t* csv, long int index, char* value, int (*func)(char* a, char* b)){
     char choice;
-    char ***aux = (char***) malloc(csv->lineCount * csv->columnsCount * sizeof(char));
+    char ***aux = (char***) malloc(csv->lineCount * sizeof(char**));
 
-    long int auxIndex[csv->lineCount];
+    long int *auxIndex = (long int*) malloc(csv->lineCount * sizeof(long int));
+    long int *mask = (long int*) malloc(csv->lineCount * sizeof(long int));
 
     int newLineCount = 1;
 
-    if (!aux){
+    if (!aux || !auxIndex || !mask){
         perror("Alocação de memória falhou.");
         return 0;
     }
@@ -300,11 +310,13 @@ int filterFile( csv_t* csv, unsigned long int index, char* value, int (*func)(ch
 
             aux[newLineCount] = csv->matrix[i];
             auxIndex[newLineCount] = csv->index[i];
+            mask[i] = i;
             for (unsigned int j = 0; j < csv->columnsCount; j++){
                 aux[newLineCount][j] = csv->matrix[i][j];
             }
             newLineCount++;
         }
+        else mask[i] = -1;
     }
 
     showFile(aux, auxIndex, newLineCount, csv->columnsCount);
@@ -321,12 +333,15 @@ int filterFile( csv_t* csv, unsigned long int index, char* value, int (*func)(ch
     scanf(" %c", &choice);
 
     if (choice == 'S'){
-        conditionalFree(csv, aux, auxIndex, newLineCount);
+        conditionalFree(csv, aux, mask, newLineCount);
     }
     printf("\n");
 
     // Free da matriz auxiliar
     // free(aux);
+
+    free(auxIndex);
+    free(mask);
 
     return 1;
 }
@@ -337,6 +352,9 @@ void filterEntry( csv_t* csv ){
     char choice;
     char column[STRING_BUFFER];
     char value[STRING_BUFFER];
+
+    memset(column, 0, sizeof(column));
+    memset(value, 0, sizeof(value));
 
     unsigned int i = 0;
 
@@ -383,7 +401,7 @@ void fileSummary( csv_t* csv ){
         printf("\n%s ", csv->matrix[0][i]);
         printf("%s", csv->headerTypes[i]);
     }
-    printf("\n%ld variaveis encontradas", csv->columnsCount);
+    printf("\n%d variaveis encontradas", csv->columnsCount);
     printf("\n");
 }
 

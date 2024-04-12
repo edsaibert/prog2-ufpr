@@ -54,7 +54,7 @@ int readCSV( csv_t *csv );
 /*  Funções opcao 1 */
 
 /*  Imprime como uma tabela  */
-void formatAsTable( char **f, int* maxStrlen, unsigned int columnsCount, char** string );
+void formatAsTable( char **f, long unsigned int* maxStrlen, unsigned int columnsCount, char** string );
 
 /*  Constrói o resumo dos 5 primeiros itens e últimos 5 itens   */
 int showFile( char*** matrix, long int* index, unsigned long int lineCount, unsigned int columnsCount );
@@ -71,7 +71,7 @@ void fileSummary( csv_t *csv );
 /*  Funcoes opcao 3 */
 
 /*  Filta as linhas com base em alguma comparação   */
-int filterFile( csv_t* csv, unsigned long int index, char* value, int (*func)(char* a, char* b) );
+int filterFile( csv_t* csv, long int index, char* value, int (*func)(char* a, char* b) );
 
 /*  Controla a entrada do usuario */
 void filterEntry( csv_t* );
@@ -86,7 +86,7 @@ void populateFile( char*** matrix, unsigned long int lineCount, unsigned int col
 /* Funções de free  */
 
 /*  Libera a memória da matriz que não satisfazeram o filtro */
-void conditionalFree( csv_t* csv, char*** newMatrix, unsigned long int* index, unsigned long int newLineCount );
+void conditionalFree( csv_t* csv, char*** newMatrix, long int* index, unsigned long int newLineCount );
 
 /*  Libera a memória alocada    */
 void freeMatrix( char*** matrix, unsigned int columnsCount, unsigned long int lineCount );
