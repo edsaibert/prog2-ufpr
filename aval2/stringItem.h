@@ -27,9 +27,6 @@ int elt(char* a, char* b);
 //  a menor que b
 int lt(char* a, char* b);   
 
-// Compara floats
-int cmpFloats(float a, float b);
-
 /* --------------------------------------- */
 
 #endif

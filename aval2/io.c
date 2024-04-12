@@ -35,7 +35,7 @@ csv_t* inicializeCSV( char* path ){
 // Função que lê os headers e também determina seu tipo
 int addToHeader( csv_t* csv ){
     // Alocação do vetor
-    csv->headerTypes = (char**) malloc(csv->columnsCount * sizeof(char*));
+    csv->headerTypes = (int*) malloc(csv->columnsCount * sizeof(int));
 
     if (!csv->headerTypes){
         perror("Alocação de memória falhou.");
@@ -43,12 +43,6 @@ int addToHeader( csv_t* csv ){
     }
 
     for (unsigned int i = 0; i < csv->columnsCount; i++){
-        csv->headerTypes[i] = (char *)malloc(4 * sizeof(char)); //(necessita apenas de 3 bytes para [N] ou [S] + /0)
-
-        if (!csv->headerTypes[i]){
-            perror("Alocação de memória falhou.");
-            return 0;
-        }
 
         // Gambiarra se o primeiro valor é NaN
         int j = 1;
@@ -57,12 +51,10 @@ int addToHeader( csv_t* csv ){
         }
 
         // Copia os tipos das colunas do header para o vetor headerNames
-        if (isdigit(csv->matrix[j][i][1])){
-            strcpy(csv->headerTypes[i], "[N]");
-        } 
-        else {
-            strcpy(csv->headerTypes[i], "[S]");
-        }
+        if (isdigit(csv->matrix[j][i][1]))
+            csv->headerTypes[i] = 0; // Vetor de char 
+        else 
+            csv->headerTypes[i] = 1; // Vetor de float 
     }
     return 1;
 }
@@ -241,13 +233,6 @@ void populateFile( char*** matrix, unsigned long int lineCount, unsigned int col
     fclose(file);
 };
 
-int notIn(unsigned long int i, long int* index, unsigned long int lineCount){
-    for (long int j = 0; j < lineCount; j++){
-        if (index[j] == i) return 0;
-    } 
-    return 1;
-}
-
 // Free somente nas linhas que não me interessam (que não estam em index)
 void conditionalFree( csv_t* csv, char*** newMatrix, long int* index, unsigned long int newLineCount ){
     for (unsigned long int i = 0; i < csv->lineCount; i++){
@@ -383,13 +368,23 @@ void filterEntry( csv_t* csv ){
     value[strlen(value) - 1] = '\0'; // Remove o \n
     printf("\n");
 
-    // define o operador
-    if      (eq(ctrl, "==")) filterFile( csv, i, value, eq);
-    else if (eq(ctrl, "!=")) filterFile( csv, i, value, neq);
-    else if (eq(ctrl, ">=")) filterFile( csv, i, value, egt);
-    else if (eq(ctrl, "> ")) filterFile( csv, i, value, gt);
-    else if (eq(ctrl, "<=")) filterFile( csv, i, value, elt);
-    else if (eq(ctrl, "< ")) filterFile( csv, i, value, lt);
+    // Escolha do filtro
+    if (csv->headerTypes[i] == 1){
+        if (eq(ctrl, "=="))      filterFile(csv, i, value, feq);
+        else if (eq(ctrl, "!=")) filterFile(csv, i, value, fneq);
+        else if (eq(ctrl, ">=")) filterFile(csv, i, value, fegt);
+        else if (eq(ctrl, "> ")) filterFile(csv, i, value, fgt);
+        else if (eq(ctrl, "<=")) filterFile(csv, i, value, felt);
+        else if (eq(ctrl, "< ")) filterFile(csv, i, value, flt);
+    }
+    else {
+        if (eq(ctrl, "=="))      filterFile(csv, i, value, eq);
+        else if (eq(ctrl, "!=")) filterFile(csv, i, value, neq);
+        else if (eq(ctrl, ">=")) filterFile(csv, i, value, egt);
+        else if (eq(ctrl, "> ")) filterFile(csv, i, value, gt);
+        else if (eq(ctrl, "<=")) filterFile(csv, i, value, elt);
+        else if (eq(ctrl, "< ")) filterFile(csv, i, value, lt);
+    }
 
     return;
 }
@@ -398,8 +393,12 @@ void filterEntry( csv_t* csv ){
 // Retorna o summary das colunas do arquivo
 void fileSummary( csv_t* csv ){
     for (unsigned int i = 0; i < csv->columnsCount; i++){
-        printf("\n%s ", csv->matrix[0][i]);
-        printf("%s", csv->headerTypes[i]);
+
+        printf("%s ", csv->matrix[0][i]);
+        if (csv->headerTypes[i] == 0)
+            printf("[S]\n");
+        else 
+            printf("[N]\n");
     }
     printf("\n%d variaveis encontradas", csv->columnsCount);
     printf("\n");
@@ -417,16 +416,17 @@ void freeMatrix( char*** matrix, unsigned int columnsCount, unsigned long int li
 };
 
 // Faz o free dos headers do csv_t
-void freeHeader( char** types, unsigned int columnsCount ){
-    for (unsigned int i = 0; i < columnsCount; i++)
-        free(types[i]);
-    free(types);
-}
+// void freeHeader( char** types, unsigned int columnsCount ){
+//     for (unsigned int i = 0; i < columnsCount; i++)
+//         free(types[i]);
+//     free(types);
+// }
 
 // Faz o free do CSV
 void freeCSV( csv_t* csv ){
     freeMatrix(csv->matrix, csv->columnsCount, csv->lineCount);
-    freeHeader(csv->headerTypes, csv->columnsCount);
+    // freeHeader(csv->headerTypes, csv->columnsCount);
+    free(csv->headerTypes);
     free(csv->index);
     fclose(csv->csv_file);
     free(csv);

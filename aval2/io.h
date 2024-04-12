@@ -7,6 +7,7 @@
 #include <ctype.h>
 
 #include "stringItem.h"
+#include "floatItem.h"
 
 #define CSV_BUFFER 1024
 #define DELIMITER ","
@@ -21,7 +22,7 @@ typedef struct csv{
     unsigned int columnsCount;       /*  Número de colunas da matriz */
     unsigned long int lineCount;          /*  Número de linhas da matriz  */
     char delimiter[2];               /*  Delimitador dos dados   */
-    char **headerTypes;              /*  Tipos de dados da tabela   */
+    int *headerTypes;              /*  Tipos de dados da tabela   */
     long int  *index;                     /*  Vetor com a coluna index*/
 
 } csv_t;
