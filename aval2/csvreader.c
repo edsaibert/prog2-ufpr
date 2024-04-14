@@ -1,5 +1,9 @@
 
-#include "io.h"
+#include "./include/io.h"
+#include "./include/stat.h"
+#include "./include/sort.h"
+#include "./include/filter.h"
+#include "./include/free.h"
 
 int main(int argc, char** argv){
     char ctrl;

@@ -1,22 +1,23 @@
 CFLAGS = -Wall
 CC = gcc -g
 
+INCLUDE = ./include
+LIB = ./lib
+OBJ = ./obj
+
 all: csvreader 
 
-csvreader: csvreader.o io.o stringItem.o 
-	$(CC) -o csvreader *.o -lm
+csvreader: csvreader.o io.o stringItem.o filter.o free.o sort.o stat.o
+	$(CC) -o csvreader $(OBJ)/*.o -lm
 
-io.o: io.c io.h
-	$(CC) -c $(CFLAGS) $< -o ./$@
+csvreader.o: csvreader.c $(INCLUDE)/*.h
+	$(CC) -c $(CFLAGS) $< -I $(INCLUDE) -o $(OBJ)/$@
 
-csvreader.o: csvreader.c io.h
-	$(CC) -c $(CFLAGS) $< ./$@
-
-stringItem.o : stringItem.c stringItem.h
-	$(CC) -c $(CFLAGS) $< -o ./$@
+%.o: $(LIB)/%.c $(INCLUDE)/%.h
+	$(CC) -c $(CFLAGS) $< -I $(INCLUDE) -o $(OBJ)/$@
 
 clean:
-	rm -f ./*.o 
+	rm -f $(OBJ)/*.o 	
 
 purge:
-	rm -f ./*.o csvreader
+	rm -f $(OBJ)/*.o ./csvreader 	
