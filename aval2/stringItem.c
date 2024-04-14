@@ -7,12 +7,10 @@ int cmp(const void* a, const void* b){
 };
 
 int qs_cmp(const void* a, const void* b){
-    if (a == NULL || b == NULL) return 0;
     return strcmp( (const char*) a, (const char*) b);
 };
 
 int qs_cmp_i(const void* a, const void* b){
-    if (a == NULL || b == NULL) return 0;
     return strcmp( (const char*) b, (const char*) a);
 };
 

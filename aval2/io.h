@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <math.h> 
 
 // Funções de comparação entre strings 
 #include "stringItem.h"
@@ -17,7 +18,6 @@
 
 /*  struct do csv   */
 typedef struct csv{
-
     FILE *csv_file;                  /*  Arquivo no qual estão os dados separados por um delimitador */
     char ***matrix;                  /*  Matriz que irá facilitar o uso dos dados no programa    */
     unsigned long int fileSize;      /*  Número de bytes do programa */
@@ -28,6 +28,12 @@ typedef struct csv{
     long int  *index;                /*  Vetor com a coluna index*/
 
 } csv_t;
+
+/*  struct para funcao stat */
+typedef struct hash{
+    char* item;
+    int count;
+} hash_t;
 
 
 /* --------------------------------------- */
@@ -88,7 +94,7 @@ void filterEntry( csv_t* );
 /* --------------------------------------- */
 /*  Funcoes opcao 4 */
 
-void estat( csv_t* csv );
+void stat( csv_t* csv );
 
 /* --------------------------------------- */
 /*  Funcoes opcao 5 */
