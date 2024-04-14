@@ -86,13 +86,19 @@ int columnSearch( csv_t* csv, char* column );
 void filterEntry( csv_t* );
 
 /* --------------------------------------- */
+/*  Funcoes opcao 4 */
+
+void estat( csv_t* csv );
+
+/* --------------------------------------- */
 /*  Funcoes opcao 5 */
 
 /*  Desloca os ponteiros    */
-void shiftPointers( char*** matrix, long int* index, unsigned long int lineCount);
+void shiftPointers( char ***auxMatrix, long int m, long int i);
+
+void quicksort( char ***auxMatrix, long int i, unsigned int j, long int n, int (*cmp)(const void*, const void*));
 
 /*  Ordena as linhas do csv com base em uma coluna   */
-/*  Utiliza a função quicksort do libc  */
 void sortFile( csv_t* csv );
 
 /* --------------------------------------- */

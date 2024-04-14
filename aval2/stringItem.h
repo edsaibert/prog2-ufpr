@@ -13,6 +13,9 @@ int cmp(const void* a, const void* b);
 /* Compara dois valores para o qsort */
 int qs_cmp(const void* a, const void* b);
 
+/* Compara dois valores para o qsort (inverso) */
+int qs_cmp_i(const void* a, const void* b);
+
 /* Compara se dois valores são iguais */
 int eq(const void* a, const void* b);
 
