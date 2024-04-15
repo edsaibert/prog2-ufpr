@@ -7,11 +7,11 @@
 /* --------------------------------------- */
 /*  Funcoes opcao 4 */
 
-char* trend( csv_t* csv, unsigned int j, char** unique );
+char* trend( char*** matrix, unsigned long int lineCount, unsigned int j, char** unique );
 
-char* mean( csv_t* csv, unsigned int j );
+char* mean( char ***matrix, unsigned long int lineCount, unsigned int j );
 
-char* stDeviantion( csv_t* csv, char* charMean, unsigned int j);
+char* stDeviantion( char ***matrix, unsigned long int lineCount, char* charMean, unsigned int j);
 
 char* median( char*** matrix, unsigned long int lineCount, unsigned int j );
 

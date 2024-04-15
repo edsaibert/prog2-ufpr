@@ -17,23 +17,41 @@ int qs_cmp_i(const void* a, const void* b){
 int eq(const void* a, const void* b){
     return cmp(a, b) == 0;
 };
+int seq(const void* a, const void* b){
+    return qs_cmp(a, b) == 0;
+};
 
 int neq(const void* a, const void* b){
     return cmp(a, b) != 0;
+};
+int sneq(const void* a, const void* b){
+    return qs_cmp(a, b) != 0;
 };
 
 int egt(const void* a, const void* b){
     return cmp(a, b) >= 0;
 };
+int segt(const void* a, const void* b){
+    return qs_cmp(a, b) >= 0;
+};
 
 int gt(const void* a, const void* b){
     return cmp(a, b) > 0;
+};
+int sgt(const void* a, const void* b){
+    return qs_cmp(a, b) > 0;
 };
 
 int elt(const void* a, const void* b){
     return cmp(a, b) <= 0;
 };
+int selt(const void* a, const void* b){
+    return qs_cmp(a, b) <= 0;
+};
 
 int lt(const void* a, const void* b){
     return cmp(a, b) < 0;
+};
+int slt(const void* a, const void* b){
+    return qs_cmp(a, b) < 0;
 };

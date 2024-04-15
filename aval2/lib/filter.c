@@ -1,7 +1,7 @@
 #include "../include/filter.h"
 
 // Free somente nas linhas que não me interessam (que não estam em index)
-void conditionalFree( csv_t* csv, char*** newMatrix, long int* index, unsigned long int newLineCount ){
+void conditionalFree_f( csv_t* csv, char*** newMatrix, long int* index, unsigned long int newLineCount ){
     for (unsigned long int i = 0; i < csv->lineCount; i++){
         if (index[i] == -1){
 
@@ -80,7 +80,7 @@ int filterFile( csv_t* csv, long int index, char* value, int (*func)(const void*
 
     choice = userInput("Deseja descartar os dados originais? [S|N]: ", 4 * sizeof(char));
     if (choice[0] == 'S' || choice[0] == 's'){
-        conditionalFree(csv, aux, mask, newLineCount);
+        conditionalFree_f(csv, aux, mask, newLineCount);
     }
     printf("\n");
 
@@ -110,12 +110,12 @@ void filterEntry( csv_t* csv ){
     ctrl = userInput("Escolha um filtro ( == > >= < <= != ): ", 4 * sizeof(char));
     value = userInput("Digite um valor: ", STRING_BUFFER);
 
-    if (eq(ctrl, "=="))      filterFile(csv, i, value, eq);
-    else if (eq(ctrl, "!=")) filterFile(csv, i, value, neq);
-    else if (eq(ctrl, ">=")) filterFile(csv, i, value, egt);
-    else if (eq(ctrl, "> ")) filterFile(csv, i, value, gt);
-    else if (eq(ctrl, "<=")) filterFile(csv, i, value, elt);
-    else if (eq(ctrl, "< ")) filterFile(csv, i, value, lt);
+    if      (strcmp(ctrl, "==") == 0) filterFile(csv, i, value, seq);
+    else if (strcmp(ctrl, "!=") == 0) filterFile(csv, i, value, sneq);
+    else if (strcmp(ctrl, ">=") == 0) filterFile(csv, i, value, segt);
+    else if (strcmp(ctrl, "> ") == 0) filterFile(csv, i, value, sgt);
+    else if (strcmp(ctrl, "<=") == 0) filterFile(csv, i, value, selt);
+    else if (strcmp(ctrl, "< ") == 0) filterFile(csv, i, value, slt);
 
     free(column);
     free(ctrl);

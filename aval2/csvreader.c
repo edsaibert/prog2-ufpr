@@ -4,6 +4,8 @@
 #include "./include/sort.h"
 #include "./include/filter.h"
 #include "./include/free.h"
+#include "./include/null.h"
+#include "./include/select.h"
 
 int main(int argc, char** argv){
     char ctrl;
@@ -57,6 +59,15 @@ int main(int argc, char** argv){
                 break;
             case '5':
                 sortFile(csv);
+                break;
+            case '6':
+                selectFile(csv);
+                break;
+            case '7':
+                switchOption(csv);
+                break;
+            case '8':
+                populateFile(csv->matrix, csv->lineCount, csv->columnsCount);
                 break;
             case '9':
                 break;

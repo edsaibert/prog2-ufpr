@@ -102,16 +102,20 @@ int readCSV( csv_t *csv ){
 
         while ((column = strsep(&p, csv->delimiter))){
 
-            if (!column) // Se a coluna for nula, atribui NaN
-                strcpy(column, "NaN");// Remove o '\n' do final da string
-
-            // Aloca espaço para o item da matriz
-            if (!(csv->matrix[csv->lineCount][csv->columnsCount] = (char *)malloc((strlen(column) + 1) * sizeof(char))))
-                return 0;
-
-            // Copia o conteúdo da coluna para o espaço [i, k] da matriz
-            strcpy(csv->matrix[csv->lineCount][csv->columnsCount], column);
-
+            if (strlen(column) == 0){
+                if (!(csv->matrix[csv->lineCount][csv->columnsCount] = (char *)malloc(4 * sizeof(char))))
+                    return 0;
+                else 
+                    strcpy(csv->matrix[csv->lineCount][csv->columnsCount], "NaN");
+            }
+            else {
+                // Aloca espaço para o item da matriz
+                if (!(csv->matrix[csv->lineCount][csv->columnsCount] = (char *)malloc((strlen(column) + 1) * sizeof(char))))
+                    return 0;
+                // Copia o conteúdo da coluna para o espaço [i, k] da matriz
+                else
+                    strcpy(csv->matrix[csv->lineCount][csv->columnsCount], column);
+            }
             (csv->columnsCount)++; // Incrementa o número de colunas
         }
         (csv->lineCount)++; // Incrementa o número de linhas
@@ -124,6 +128,7 @@ int readCSV( csv_t *csv ){
 }
 
 // Função que formata cada item da tabela conforme o maior item de sua coluna
+// (cópia do prof vinicius)
 void formatAsTable( char** f, long unsigned int* maxStrlen, unsigned int columnsCount, char** string ){
     unsigned long int i = 0;
     unsigned int j;
@@ -211,14 +216,25 @@ int showFile( char*** matrix, long int* index, unsigned long int lineCount, unsi
     return 1;
 }
 
+/* Print de uma mensagem seguida de um input do usuario */
+char* userInput( char* message, int size ){
+    char *aux = (char*) malloc(size * sizeof(char));
+    memset(aux, 0, size);
+
+    printf("%s", message);
+    fgets(aux, size, stdin);
+    //Remove o /n
+    aux[strlen(aux) - 1] = '\0';
+
+    printf("\n");
+    return aux;
+}
+
 // Popula um arquivo com os dados de uma matriz
 void populateFile( char*** matrix, unsigned long int lineCount, unsigned int columnsCount ){
-    char path[STRING_BUFFER];
+    char *path;
 
-    printf("Entre com o nome do arquivo: ");
-    getchar();
-    fgets(path, STRING_BUFFER, stdin);
-    printf("\n");
+    path = userInput("Entre com o nome do arquivo: ", STRING_BUFFER);
 
     FILE* file = createFile(path, "w+");
     for (unsigned long int i = 0; i < lineCount; i++){
@@ -229,6 +245,7 @@ void populateFile( char*** matrix, unsigned long int lineCount, unsigned int col
     }
 
     printf("Arquivo gravado com sucesso.\n");
+    free(path);
     fclose(file);
 };
 
@@ -259,19 +276,5 @@ void fileSummary( csv_t* csv ){
     }
     printf("\n%d variaveis encontradas", csv->columnsCount);
     printf("\n");
-}
-
-/* Print de uma mensagem seguida de um input do usuario */
-char* userInput( char* message, int size ){
-    char *aux = (char*) malloc(size * sizeof(char));
-    memset(aux, 0, size);
-
-    printf("%s", message);
-    fgets(aux, size, stdin);
-    //Remove o /n
-    aux[strlen(aux) - 1] = '\0';
-
-    printf("\n");
-    return aux;
 }
 

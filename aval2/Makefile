@@ -7,7 +7,7 @@ OBJ = ./obj
 
 all: csvreader 
 
-csvreader: csvreader.o io.o stringItem.o filter.o free.o sort.o stat.o
+csvreader: csvreader.o io.o stringItem.o filter.o free.o sort.o stat.o null.o select.o
 	$(CC) -o csvreader $(OBJ)/*.o -lm
 
 csvreader.o: csvreader.c $(INCLUDE)/*.h

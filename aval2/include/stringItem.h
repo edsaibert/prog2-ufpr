@@ -18,21 +18,27 @@ int qs_cmp_i(const void* a, const void* b);
 
 /* Compara se dois valores são iguais */
 int eq(const void* a, const void* b);
+int seq(const void* a, const void* b);
 
 /* Compara se dois valores são diferentes */
 int neq(const void* a, const void* b);
+int sneq(const void* a, const void* b);
 
 /* Compara se um valor é maior ou igual ao outro */
 int egt(const void* a, const void* b);
+int segt(const void* a, const void* b);
 
 /* Compara se um valor é maior que o outro */
 int gt(const void* a, const void* b);
+int sgt(const void* a, const void* b);
 
 /* Compara se um valor é menor ou igual ao outro */
 int elt(const void* a, const void* b);
+int selt(const void* a, const void* b);
 
 /* Compara se um valor é menor que o outro */
 int lt(const void* a, const void* b);
+int slt(const void* a, const void* b);
 
 /* --------------------------------------- */
 
