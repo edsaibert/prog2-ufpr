@@ -53,7 +53,8 @@ char* mean( char*** matrix, unsigned long int lineCount, unsigned int j ){
 
     for (unsigned long int i = 1; i < lineCount; i++){
         value = matrix[i][j];
-        if (neq(value, "NaN"))
+        int neqresult = neq(value, "NaN");
+        if (neqresult)
             sum += atof(value);
     }
 

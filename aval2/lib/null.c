@@ -41,8 +41,6 @@ int filterNan( csv_t* csv, int optionShow, int optionRemove ){
 
     if (optionRemove)
         conditionalFree_f(csv, aux, mask, newLineCount);
-    else
-        free(aux);
 
     free(auxIndex);
     free(mask);
@@ -52,12 +50,17 @@ int filterNan( csv_t* csv, int optionShow, int optionRemove ){
 // Subistitui valores NaN pela media
 void meanSubstitute( char*** matrix, unsigned long int lineCount, unsigned int columnsCount ){
     char* meanResult = NULL;
+    int eqresult = 0;
 
     for (int j = 0; j < columnsCount; j++){
         meanResult = mean(matrix, lineCount, j);
         for (int i = 0; i < lineCount; i++){
-            if (eq(matrix[i][j], "NaN")){
-                strcpy(matrix[i][j], meanResult);
+            eqresult = eq(matrix[i][j], "NaN");
+            if (eqresult){
+                matrix[i][j] = realloc(matrix[i][j], strlen(meanResult) + 1);
+                if (matrix[i][j] != NULL) {
+                    strcpy(matrix[i][j], meanResult);
+                }
             }
         }
         free(meanResult);
@@ -78,6 +81,7 @@ void proxSubstitute( char*** matrix, unsigned long int lineCount, unsigned int c
                     while (k != lineCount - 1 && eq(matrix[k][j], "NaN"))
                         k++;
                 }
+                matrix[i][j] = realloc(matrix[i][j], strlen(matrix[k][j]) + 1);
                 strcpy(matrix[i][j], matrix[k][j]);
             }
         }
