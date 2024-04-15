@@ -41,7 +41,7 @@ void selectFile( csv_t* csv ){
     // Print 
     showFile(aux, csv->index, csv->lineCount, count);
 
-    choice = userInput("Deseja gravar um arquivo com as variáveis selecionadas? [S|N] ", 2);
+    choice = userInput("Deseja gravar um arquivo com as variáveis selecionadas? [S|N] ", 3);
     if (choice[0] == 'S' || choice[0] == 's')
         populateFile(aux, csv->lineCount, count);
 

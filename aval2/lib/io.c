@@ -241,6 +241,7 @@ void populateFile( char*** matrix, unsigned long int lineCount, unsigned int col
         for (unsigned int j = 0; j < columnsCount; j++){
             fprintf(file, "%s", matrix[i][j]);
             if (j != columnsCount - 1) fprintf(file, ",");
+            else fprintf(file, "\n");
         }
     }
 
